@@ -6,16 +6,16 @@ TerrainLayer:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: microsplat_layer__0
-  m_DiffuseTexture: {fileID: 0}
-  m_NormalMapTexture: {fileID: 0}
+  m_Name: 3_Layer
+  m_DiffuseTexture: {fileID: 2800000, guid: e55d30c77abce4c5d87ad36507faff12, type: 3}
+  m_NormalMapTexture: {fileID: 2800000, guid: 2cda5170fa67847e7840f3630b30824b, type: 3}
   m_MaskMapTexture: {fileID: 0}
-  m_TileSize: {x: 1.1111112, y: 1.1111112}
+  m_TileSize: {x: 3, y: 3}
   m_TileOffset: {x: 0, y: 0}
   m_Specular: {r: 0, g: 0, b: 0, a: 0}
   m_Metallic: 0
   m_Smoothness: 0
-  m_NormalScale: 1
+  m_NormalScale: 2
   m_DiffuseRemapMin: {x: 0, y: 0, z: 0, w: 0}
   m_DiffuseRemapMax: {x: 1, y: 1, z: 1, w: 1}
   m_MaskMapRemapMin: {x: 0, y: 0, z: 0, w: 0}
