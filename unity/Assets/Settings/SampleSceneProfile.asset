@@ -18,10 +18,10 @@ MonoBehaviour:
     m_Value: 0
   threshold:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.6
   intensity:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 1.2
   scatter:
     m_OverrideState: 1
     m_Value: 0.5
@@ -34,6 +34,9 @@ MonoBehaviour:
   highQualityFiltering:
     m_OverrideState: 1
     m_Value: 1
+  filter:
+    m_OverrideState: 0
+    m_Value: 0
   downscale:
     m_OverrideState: 0
     m_Value: 0
@@ -68,11 +71,57 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.2
+    m_Value: 0.47
   smoothness:
-    m_OverrideState: 0
-    m_Value: 0.2
+    m_OverrideState: 1
+    m_Value: 0.189
   rounded:
+    m_OverrideState: 0
+    m_Value: 0
+--- !u!114 &-889222711917177956
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01700fd266d6914ababb731e09af2eb, type: 3}
+  m_Name: DepthOfField
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.DepthOfField
+  active: 1
+  mode:
+    m_OverrideState: 1
+    m_Value: 2
+  gaussianStart:
+    m_OverrideState: 1
+    m_Value: 20
+  gaussianEnd:
+    m_OverrideState: 1
+    m_Value: 100
+  gaussianMaxRadius:
+    m_OverrideState: 1
+    m_Value: 1
+  highQualitySampling:
+    m_OverrideState: 0
+    m_Value: 0
+  focusDistance:
+    m_OverrideState: 1
+    m_Value: 4.5
+  aperture:
+    m_OverrideState: 1
+    m_Value: 8.9
+  focalLength:
+    m_OverrideState: 1
+    m_Value: 120
+  bladeCount:
+    m_OverrideState: 0
+    m_Value: 5
+  bladeCurvature:
+    m_OverrideState: 0
+    m_Value: 1
+  bladeRotation:
     m_OverrideState: 0
     m_Value: 0
 --- !u!114 &11400000
@@ -90,8 +139,8 @@ MonoBehaviour:
   components:
   - {fileID: 849379129802519247}
   - {fileID: -7893295128165547882}
-  - {fileID: 7391319092446245454}
   - {fileID: -3357603926938260329}
+  - {fileID: -889222711917177956}
 --- !u!114 &849379129802519247
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -107,7 +156,7 @@ MonoBehaviour:
   active: 1
   mode:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 2
   neutralHDRRangeReductionMode:
     m_OverrideState: 0
     m_Value: 2
@@ -132,28 +181,3 @@ MonoBehaviour:
   maxNits:
     m_OverrideState: 1
     m_Value: 647
---- !u!114 &7391319092446245454
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccf1aba9553839d41ae37dd52e9ebcce, type: 3}
-  m_Name: MotionBlur
-  m_EditorClassIdentifier: 
-  active: 0
-  mode:
-    m_OverrideState: 0
-    m_Value: 0
-  quality:
-    m_OverrideState: 1
-    m_Value: 2
-  intensity:
-    m_OverrideState: 1
-    m_Value: 0.6
-  clamp:
-    m_OverrideState: 0
-    m_Value: 0.05
