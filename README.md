@@ -1,6 +1,4 @@
-# habitarium
-
-habitarium = habitable + terrarium (aquarium)
+# aquarium
 
 HD-2D 調の放置型育成ゲームです。
 
