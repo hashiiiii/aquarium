@@ -13,6 +13,61 @@
 - サンゴ礁、海藻などの植生
 - 多層背景による奥行き感
 
+---
+
+## 実装進捗
+
+### Phase 1: 基盤（最優先）
+- [ ] カメラ設定（Step 1）
+- [ ] 多層背景システム（Step 2）
+- [ ] 砂地テクスチャ（Step 3）
+
+### Phase 2: ライティング
+- [ ] Directional Light（Step 5）
+- [ ] ゴッドレイ（Step 5）
+- [ ] コースティクス（Step 7）
+
+### Phase 3: 装飾物（Step 4）
+- [ ] 沈没船
+- [ ] 古代遺跡（左）
+- [ ] 古代遺跡（右）
+- [ ] サンゴ（ピンク）
+- [ ] サンゴ（紫）
+- [ ] サンゴ（青）
+- [ ] サンゴ（黄/オレンジ）
+- [ ] 海藻（緑/ケルプ）
+
+### Phase 4: Post Processing（Step 6）
+- [ ] Bloom
+- [ ] Color Adjustments
+- [ ] Vignette
+- [ ] Depth of Field
+- [ ] Film Grain
+
+### Phase 5: パーティクル（Step 8）
+- [ ] 泡 (Bubbles)
+- [ ] 浮遊物 (FloatingDebris)
+- [ ] 光の粒子 (LightShafts)
+
+**全体進捗: 0/23 項目完了**
+
+---
+
+## 実装優先順位
+
+効果が高い順:
+
+1. **多層背景** - 奥行き感に最も影響
+2. **ゴッドレイ** - 水中感の核心
+3. **Post Processing** - 全体の雰囲気
+4. **砂地テクスチャ** - 海底のリアリティ
+5. **大型装飾** - 沈没船、遺跡
+6. **コースティクス** - 光の揺らぎ
+7. **サンゴ・海藻** - 生態系の表現
+8. **パーティクル** - 仕上げ
+
+---
+
 ## シーン構成
 
 ```
@@ -42,6 +97,8 @@ Scene Hierarchy:
 └── Characters (2D Sprites)
 ```
 
+---
+
 ## Step 1: カメラ設定
 
 | 項目 | 値 | 備考 |
@@ -52,6 +109,8 @@ Scene Hierarchy:
 | Rotation | X=15〜25, Y=0, Z=0 | 軽い俯瞰 |
 | Clear Flags | Solid Color | |
 | Background | #0a1a2e | 深海の暗い青 |
+
+---
 
 ## Step 2: 多層背景システム
 
@@ -85,6 +144,8 @@ Material: Sprite-Lit-3D
 Texture: 詳細な背景（サンゴ、岩など）
 ```
 
+---
+
 ## Step 3: 海底 (Floor)
 
 ### 砂地テクスチャ
@@ -101,6 +162,8 @@ Texture設定:
 
 既存の Terrain Layers を活用可能:
 - `Assets/Terrains/Layers/1_Layer/` (Diffuse + Normal)
+
+---
 
 ## Step 4: 装飾物 (Props)
 
@@ -139,6 +202,8 @@ Position: (4, 0, 3)
   3. 半透明で奥行き感
 ```
 
+---
+
 ## Step 5: ライティング
 
 ### Directional Light (メイン)
@@ -160,6 +225,8 @@ Spot Angle: 15〜25
 Range: 30
 Volumetric: 有効化（URP対応時）
 ```
+
+---
 
 ## Step 6: Post Processing
 
@@ -199,6 +266,8 @@ URP Volume で水中感を演出。
 | Intensity | 0.1 |
 | Response | 0.5 |
 
+---
+
 ## Step 7: コースティクス（水面の光）
 
 床や装飾物に投影する水面の光の揺らぎ。
@@ -224,6 +293,8 @@ float2 causticUV = worldPos.xz * 0.5;
 causticUV += _Time.y * float2(0.02, 0.01);
 float caustic = tex2D(_CausticTex, causticUV).r;
 ```
+
+---
 
 ## Step 8: パーティクル
 
@@ -259,6 +330,8 @@ float caustic = tex2D(_CausticTex, causticUV).r;
 | Color over Lifetime | 明→暗 |
 | Size over Lifetime | 小→大 |
 
+---
+
 ## Step 9: 2Dスプライト配置
 
 ### モンスター/キャラクター
@@ -274,18 +347,26 @@ Billboard.cs でカメラ向き固定
   Receive Shadows: On
 ```
 
-## 実装優先順位
+---
 
-効果が高い順:
+## 必要なアセット一覧
 
-1. **多層背景** - 奥行き感に最も影響
-2. **ゴッドレイ** - 水中感の核心
-3. **Post Processing** - 全体の雰囲気
-4. **砂地テクスチャ** - 海底のリアリティ
-5. **大型装飾** - 沈没船、遺跡
-6. **コースティクス** - 光の揺らぎ
-7. **サンゴ・海藻** - 生態系の表現
-8. **パーティクル** - 仕上げ
+### テクスチャ
+- [ ] 遠景背景（水中霧）
+- [ ] 中景背景（遺跡シルエット）
+- [ ] 近景背景（詳細）
+- [ ] 砂地テクスチャ（Diffuse + Normal）
+- [ ] 沈没船スプライト
+- [ ] 遺跡・柱スプライト（複数パーツ）
+- [ ] サンゴスプライト（各色 5-6種類）
+- [ ] 海藻スプライト（2-3種類）
+- [ ] コースティクステクスチャ（ループ可能）
+
+### シェーダー/マテリアル
+- [ ] 海藻揺れシェーダー（sin波アニメーション）
+- [ ] 水中カラーグレーディング（URP Volume Profile）
+
+---
 
 ## アセット作成ワークフロー
 
