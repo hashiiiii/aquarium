@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Sprite-Lit-3D
+  m_Name: SpriteLit3D
   m_Shader: {fileID: 4800000, guid: d2a217b3fc8f547108f0851ab66b5587, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

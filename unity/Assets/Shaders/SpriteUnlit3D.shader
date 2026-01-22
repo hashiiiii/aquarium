@@ -1,4 +1,4 @@
-Shader "Universal Render Pipeline/2D/Sprite-Lit-3D"
+Shader "Universal Render Pipeline/2D/SpriteLit3D"
 {
     Properties
     {
