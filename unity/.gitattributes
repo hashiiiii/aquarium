@@ -1,8 +1,5 @@
-# Macro for Unity YAML-based asset files.
-[attr]unityyaml -text merge=unityyamlmerge diff
-
-# Macro for all binary files that should use Git LFS.
-[attr]lfs -text filter=lfs diff=lfs merge=lfs
+# Unity .gitattributes for Mono-repo subfolder
+# Macros are expanded because they are only allowed in the root directory.
 
 # Default to auto-normalized line endings.
 * text=auto
@@ -10,119 +7,119 @@
 # Code
 *.cs text diff=csharp
 
-# Unity Text Assets
-*.meta unityyaml
-*.unity unityyaml
-*.asset unityyaml
-*.prefab unityyaml
-*.mat unityyaml
-*.anim unityyaml
-*.controller unityyaml
-*.overrideController unityyaml
-*.physicMaterial unityyaml
-*.physicsMaterial2D unityyaml
-*.playable unityyaml
-*.mask unityyaml
-*.brush unityyaml
-*.flare unityyaml
-*.fontsettings unityyaml
-*.guiskin unityyaml
-*.giparams unityyaml
-*.renderTexture unityyaml
-*.spriteatlas unityyaml
-*.terrainlayer unityyaml
-*.mixer unityyaml
-*.shadervariants unityyaml
-*.preset unityyaml
+# Unity Text Assets (Expanded unityyaml macro)
+*.meta -text merge=unityyamlmerge diff
+*.unity -text merge=unityyamlmerge diff
+*.asset -text merge=unityyamlmerge diff
+*.prefab -text merge=unityyamlmerge diff
+*.mat -text merge=unityyamlmerge diff
+*.anim -text merge=unityyamlmerge diff
+*.controller -text merge=unityyamlmerge diff
+*.overrideController -text merge=unityyamlmerge diff
+*.physicMaterial -text merge=unityyamlmerge diff
+*.physicsMaterial2D -text merge=unityyamlmerge diff
+*.playable -text merge=unityyamlmerge diff
+*.mask -text merge=unityyamlmerge diff
+*.brush -text merge=unityyamlmerge diff
+*.flare -text merge=unityyamlmerge diff
+*.fontsettings -text merge=unityyamlmerge diff
+*.guiskin -text merge=unityyamlmerge diff
+*.giparams -text merge=unityyamlmerge diff
+*.renderTexture -text merge=unityyamlmerge diff
+*.spriteatlas -text merge=unityyamlmerge diff
+*.terrainlayer -text merge=unityyamlmerge diff
+*.mixer -text merge=unityyamlmerge diff
+*.shadervariants -text merge=unityyamlmerge diff
+*.preset -text merge=unityyamlmerge diff
 *.asmdef -text diff
 
-# Unity Binary Assets
-*.cubemap lfs
-*.unitypackage lfs
+# Unity Binary Assets (Expanded lfs macro)
+*.cubemap -text filter=lfs diff=lfs merge=lfs
+*.unitypackage -text filter=lfs diff=lfs merge=lfs
 # Note: Unity terrain assets must have "-Terrain" suffix.
-*-[Tt]errain.asset -unityyaml lfs
+*-[Tt]errain.asset -text filter=lfs diff=lfs merge=lfs
 # Note: Unity navmesh assets must have "-NavMesh" suffix.
-*-[Nn]av[Mm]esh.asset -unityyaml lfs
+*-[Nn]av[Mm]esh.asset -text filter=lfs diff=lfs merge=lfs
 
-# Image
-*.jpg lfs
-*.jpeg lfs
-*.png lfs
-*.apng lfs
-*.atsc lfs
-*.gif lfs
-*.bmp lfs
-*.exr lfs
-*.tga lfs
-*.tiff lfs
-*.tif lfs
-*.iff lfs
-*.pict lfs
-*.dds lfs
-*.xcf lfs
-*.leo lfs
-*.kra lfs
-*.kpp lfs
-*.clip lfs
-*.webm lfs
-*.webp lfs
-*.svg lfs
-*.svgz lfs
-*.psd lfs
-*.afphoto lfs
-*.afdesign lfs
+# Image (Expanded lfs macro)
+*.jpg -text filter=lfs diff=lfs merge=lfs
+*.jpeg -text filter=lfs diff=lfs merge=lfs
+*.png -text filter=lfs diff=lfs merge=lfs
+*.apng -text filter=lfs diff=lfs merge=lfs
+*.atsc -text filter=lfs diff=lfs merge=lfs
+*.gif -text filter=lfs diff=lfs merge=lfs
+*.bmp -text filter=lfs diff=lfs merge=lfs
+*.exr -text filter=lfs diff=lfs merge=lfs
+*.tga -text filter=lfs diff=lfs merge=lfs
+*.tiff -text filter=lfs diff=lfs merge=lfs
+*.tif -text filter=lfs diff=lfs merge=lfs
+*.iff -text filter=lfs diff=lfs merge=lfs
+*.pict -text filter=lfs diff=lfs merge=lfs
+*.dds -text filter=lfs diff=lfs merge=lfs
+*.xcf -text filter=lfs diff=lfs merge=lfs
+*.leo -text filter=lfs diff=lfs merge=lfs
+*.kra -text filter=lfs diff=lfs merge=lfs
+*.kpp -text filter=lfs diff=lfs merge=lfs
+*.clip -text filter=lfs diff=lfs merge=lfs
+*.webm -text filter=lfs diff=lfs merge=lfs
+*.webp -text filter=lfs diff=lfs merge=lfs
+*.svg -text filter=lfs diff=lfs merge=lfs
+*.svgz -text filter=lfs diff=lfs merge=lfs
+*.psd -text filter=lfs diff=lfs merge=lfs
+*.afphoto -text filter=lfs diff=lfs merge=lfs
+*.afdesign -text filter=lfs diff=lfs merge=lfs
 
-# Audio
-*.mp3 lfs
-*.ogg lfs
-*.wav lfs
-*.aiff lfs
-*.aif lfs
-*.mod lfs
-*.it lfs
-*.s3m lfs
-*.xm lfs
+# Audio (Expanded lfs macro)
+*.mp3 -text filter=lfs diff=lfs merge=lfs
+*.ogg -text filter=lfs diff=lfs merge=lfs
+*.wav -text filter=lfs diff=lfs merge=lfs
+*.aiff -text filter=lfs diff=lfs merge=lfs
+*.aif -text filter=lfs diff=lfs merge=lfs
+*.mod -text filter=lfs diff=lfs merge=lfs
+*.it -text filter=lfs diff=lfs merge=lfs
+*.s3m -text filter=lfs diff=lfs merge=lfs
+*.xm -text filter=lfs diff=lfs merge=lfs
 
-# Video
-*.mov lfs
-*.avi lfs
-*.asf lfs
-*.mpg lfs
-*.mpeg lfs
-*.mp4 lfs
-*.flv lfs
-*.ogv lfs
-*.wmv lfs
+# Video (Expanded lfs macro)
+*.mov -text filter=lfs diff=lfs merge=lfs
+*.avi -text filter=lfs diff=lfs merge=lfs
+*.asf -text filter=lfs diff=lfs merge=lfs
+*.mpg -text filter=lfs diff=lfs merge=lfs
+*.mpeg -text filter=lfs diff=lfs merge=lfs
+*.mp4 -text filter=lfs diff=lfs merge=lfs
+*.flv -text filter=lfs diff=lfs merge=lfs
+*.ogv -text filter=lfs diff=lfs merge=lfs
+*.wmv -text filter=lfs diff=lfs merge=lfs
 
-# 3D
-*.fbx lfs
-*.obj lfs
-*.max lfs
-*.blend lfs
-*.blender lfs
-*.dae lfs
-*.mb lfs
-*.ma lfs
-*.3ds lfs
-*.dfx lfs
-*.c4d lfs
-*.lwo lfs
-*.lwo2 lfs
-*.abc lfs
-*.3dm lfs
-*.bin lfs
-*.glb lfs
+# 3D (Expanded lfs macro)
+*.fbx -text filter=lfs diff=lfs merge=lfs
+*.obj -text filter=lfs diff=lfs merge=lfs
+*.max -text filter=lfs diff=lfs merge=lfs
+*.blend -text filter=lfs diff=lfs merge=lfs
+*.blender -text filter=lfs diff=lfs merge=lfs
+*.dae -text filter=lfs diff=lfs merge=lfs
+*.mb -text filter=lfs diff=lfs merge=lfs
+*.ma -text filter=lfs diff=lfs merge=lfs
+*.3ds -text filter=lfs diff=lfs merge=lfs
+*.dfx -text filter=lfs diff=lfs merge=lfs
+*.c4d -text filter=lfs diff=lfs merge=lfs
+*.lwo -text filter=lfs diff=lfs merge=lfs
+*.lwo2 -text filter=lfs diff=lfs merge=lfs
+*.abc -text filter=lfs diff=lfs merge=lfs
+*.3dm -text filter=lfs diff=lfs merge=lfs
+*.bin -text filter=lfs diff=lfs merge=lfs
+*.glb -text filter=lfs diff=lfs merge=lfs
 
-# Executables
-*.exe lfs
-*.dll lfs
-*.so lfs
-*.pdb lfs
-*.mdb lfs
+# Executables (Expanded lfs macro)
+*.exe -text filter=lfs diff=lfs merge=lfs
+*.dll -text filter=lfs diff=lfs merge=lfs
+*.so -text filter=lfs diff=lfs merge=lfs
+*.pdb -text filter=lfs diff=lfs merge=lfs
+*.mdb -text filter=lfs diff=lfs merge=lfs
 
-# Packaging
-*.zip lfs
-*.7z lfs
-*.gz lfs
-*.rar lfs
-*.tar lfs
+# Packaging (Expanded lfs macro)
+*.zip -text filter=lfs diff=lfs merge=lfs
+*.7z -text filter=lfs diff=lfs merge=lfs
+*.gz -text filter=lfs diff=lfs merge=lfs
+*.rar -text filter=lfs diff=lfs merge=lfs
+*.tar -text filter=lfs diff=lfs merge=lfs
