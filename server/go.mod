@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fce5becc1238c4539eb48c92f6a732346d3a9f1b9185e6f1905beb2a94e4335e
-size 156
+module github.com/hashiiiii/aquarium
+
+go 1.25.6
+
+require (
+	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/go-sql-driver/mysql v1.9.3 // indirect
+)
