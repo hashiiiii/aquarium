@@ -1,14 +1,5 @@
 {
   "dependencies": {
-    "com.coffee.ui-effect": {
-      "version": "https://github.com/mob-sakai/UIEffect.git?path=Packages/src",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.ugui": "1.0.0"
-      },
-      "hash": "70937d2ce39b61c29c4feb4d13642c65bb553d6c"
-    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
@@ -61,20 +52,11 @@
       "dependencies": {}
     },
     "com.unity.ide.rider": {
-      "version": "3.0.38",
+      "version": "3.0.39",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.ext.nunit": "1.0.6"
-      },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.ide.visualstudio": {
-      "version": "2.0.25",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.test-framework": "1.1.31"
       },
       "url": "https://packages.unity.com"
     },
@@ -107,6 +89,15 @@
       "depth": 3,
       "source": "registry",
       "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.platformtoolkit": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.jsonserialize": "1.0.0"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.core": {
@@ -178,7 +169,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.8.9",
+      "version": "1.8.10",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -207,6 +198,13 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "jp.hadashikick.vcontainer": {
+      "version": "1.17.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
