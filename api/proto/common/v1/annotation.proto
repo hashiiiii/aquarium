@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package common.v1;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.MethodOptions {
+  repeated ErrorDetail error_detail = 50000;
+  CustomerSupport customer_support = 50001;
+  bool session_token_required = 50002;
+}
+
+extend google.protobuf.EnumValueOptions {
+  HttpStatusClass http_status_class = 60000;
+}
+
+message ErrorDetail {
+  ErrorCode error_code = 1;
+  ErrorType error_type = 2;
+  string message = 3;
+}
+
+message CustomerSupport {
+  string cs_code = 1;
+}
+
+enum ErrorType {
+  ERROR_TYPE_UNSPECIFIED = 0;
+  ERROR_TYPE_FATAL = 1;
+  ERROR_TYPE_TEMPORARY = 2;
+  ERROR_TYPE_RETRYABLE = 3;
+}
+
+enum ErrorCode {
+  ERROR_CODE_UNSPECIFIED = 0 [(http_status_class) = HTTP_STATUS_CLASS_UNSPECIFIED];
+  ERROR_CODE_UNAUTHORIZED = 10 [(http_status_class) = HTTP_STATUS_CLASS_CLIENT];
+  ERROR_CODE_NOT_FOUND = 11 [(http_status_class) = HTTP_STATUS_CLASS_CLIENT];
+  ERROR_CODE_CONFLICT = 12 [(http_status_class) = HTTP_STATUS_CLASS_CLIENT];
+  ERROR_CODE_PLAYER_DEACTIVATED = 13 [(http_status_class) = HTTP_STATUS_CLASS_CLIENT];
+  ERROR_CODE_PLAYER_BANNED = 14 [(http_status_class) = HTTP_STATUS_CLASS_CLIENT];
+  ERROR_CODE_OPTED_OUT = 15 [(http_status_class) = HTTP_STATUS_CLASS_CLIENT];
+  ERROR_CODE_UPDATE_REQUIRED = 16 [(http_status_class) = HTTP_STATUS_CLASS_CLIENT];
+  ERROR_CODE_INTERNAL_SERVER_ERROR = 100 [(http_status_class) = HTTP_STATUS_CLASS_SERVER];
+  ERROR_CODE_INVALID_ARGUMENT = 101 [(http_status_class) = HTTP_STATUS_CLASS_SERVER];
+}
+
+enum HttpStatusClass {
+  HTTP_STATUS_CLASS_UNSPECIFIED = 0;
+  HTTP_STATUS_CLASS_CLIENT = 1;
+  HTTP_STATUS_CLASS_SERVER = 2;
+}

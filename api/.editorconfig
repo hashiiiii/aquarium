@@ -1,0 +1,4 @@
+root = true
+
+[*.proto]
+indent_size = 2 # apply indent before save

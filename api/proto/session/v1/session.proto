@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package session.v1;
+
+import "buf/validate/validate.proto";
+import "common/v1/annotation.proto";
+
+service SessionService {
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (common.v1.customer_support) = "XXXX-YYYY";
+    option (common.v1.error_detail) = {
+      error_code: ERROR_CODE_NOT_FOUND
+      error_type: ERROR_TYPE_RETRYABLE
+      message: "Player not found."
+    };
+    option (common.v1.error_detail) = {
+      error_code: ERROR_CODE_PLAYER_BANNED
+      error_type: ERROR_TYPE_FATAL
+      message: "Player banned."
+    };
+  }
+}
+
+message LoginRequest {
+  // デバイス ID
+  // デバイスごとに発行する
+  string device_id = 1 [(buf.validate.field).required = true];
+  // 公開鍵
+  // クライアントで発行する
+  string public_key = 2 [(buf.validate.field).required = true];
+  // 秘密鍵によって署名されたデバイス ID
+  // 秘密鍵は公開鍵とセットでクライアントで発行する
+  string signed_device_id = 3 [(buf.validate.field).required = true];
+  // プラットフォーム ID
+  // プラットフォーム連携後はこちらを利用してログインする
+  optional string platform_id = 4;
+  // 端末移行 ID
+  // 端末移行時にクライアント側で発行する
+  // ただし、プラットフォーム連携後は移行後の端末で対象プラットフォームにログインすることで
+  // この ID を利用せずとも移行を行うことが可能
+  optional string transfer_id = 5;
+}
+
+message LoginResponse {
+  // JWT セッショントークン
+  string session_token = 1;
+  // プレイヤー ID
+  string player_id = 2;
+  // 新規プレイヤーかどうか
+  bool is_new_player = 3;
+}
