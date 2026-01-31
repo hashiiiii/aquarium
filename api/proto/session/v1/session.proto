@@ -7,7 +7,7 @@ import "common/v1/annotation.proto";
 
 service SessionService {
   rpc Login(LoginRequest) returns (LoginResponse) {
-    option (common.v1.customer_support) = "XXXX-YYYY";
+    option (common.v1.customer_support) = {cs_code: "XXXX-YYYY"};
     option (common.v1.error_detail) = {
       error_code: ERROR_CODE_NOT_FOUND
       error_type: ERROR_TYPE_RETRYABLE

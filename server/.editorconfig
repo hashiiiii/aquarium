@@ -1,4 +1,4 @@
 root = true
 
-[*.proto, *.yaml]
+[*.yaml, *.yml]
 indent_size = 2 # apply indent before save
