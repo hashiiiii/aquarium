@@ -385,8 +385,8 @@ const file_common_v1_annotation_proto_rawDesc = "" +
 	"\ferror_detail\x12\x1e.google.protobuf.MethodOptions\x18І\x03 \x03(\v2\x16.common.v1.ErrorDetailR\verrorDetail:g\n" +
 	"\x10customer_support\x12\x1e.google.protobuf.MethodOptions\x18ц\x03 \x01(\v2\x1a.common.v1.CustomerSupportR\x0fcustomerSupport:V\n" +
 	"\x16session_token_required\x12\x1e.google.protobuf.MethodOptions\x18҆\x03 \x01(\bR\x14sessionTokenRequired:k\n" +
-	"\x11http_status_class\x12!.google.protobuf.EnumValueOptions\x18\xe0\xd4\x03 \x01(\x0e2\x1a.common.v1.HttpStatusClassR\x0fhttpStatusClassB\x8f\x01\n" +
-	"\rcom.common.v1B\x0fAnnotationProtoP\x01Z4github.com/hashiiiii/aquarium/gen/common/v1;commonv1\xa2\x02\x03CXX\xca\x02\tCommon\\V1\xe2\x02\x15Common\\V1\\GPBMetadata\xea\x02\n" +
+	"\x11http_status_class\x12!.google.protobuf.EnumValueOptions\x18\xe0\xd4\x03 \x01(\x0e2\x1a.common.v1.HttpStatusClassR\x0fhttpStatusClassB\x9b\x01\n" +
+	"\rcom.common.v1B\x0fAnnotationProtoP\x01Z4github.com/hashiiiii/aquarium/gen/common/v1;commonv1\xa2\x02\x03CXX\xaa\x02\tCommon.V1\xca\x02\tCommon\\V1\xe2\x02\x15Common\\V1\\GPBMetadata\xea\x02\n" +
 	"Common::V1b\x06proto3"
 
 var (

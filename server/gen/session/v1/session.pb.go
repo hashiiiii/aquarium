@@ -197,8 +197,9 @@ const file_session_v1_session_proto_rawDesc = "" +
 	"\ris_new_player\x18\x03 \x01(\bR\visNewPlayer2\x93\x01\n" +
 	"\x0eSessionService\x12\x80\x01\n" +
 	"\x05Login\x12\x18.session.v1.LoginRequest\x1a\x19.session.v1.LoginResponse\"B\x82\xb5\x18\x17\b\v\x10\x03\x1a\x11Player not found.\x82\xb5\x18\x14\b\x0e\x10\x01\x1a\x0ePlayer banned.\x8a\xb5\x18\v\n" +
-	"\tXXXX-YYYYB\x92\x01\n" +
-	"\x0ecom.session.v1B\fSessionProtoP\x01Z6github.com/hashiiiii/aquarium/gen/session/v1;sessionv1\xa2\x02\x03SXX\xca\x02\n" +
+	"\tXXXX-YYYYB\x9f\x01\n" +
+	"\x0ecom.session.v1B\fSessionProtoP\x01Z6github.com/hashiiiii/aquarium/gen/session/v1;sessionv1\xa2\x02\x03SXX\xaa\x02\n" +
+	"Session.V1\xca\x02\n" +
 	"Session\\V1\xe2\x02\x16Session\\V1\\GPBMetadata\xea\x02\vSession::V1b\x06proto3"
 
 var (
