@@ -1,4 +1,5 @@
 root = true
 
 [*.proto, *.yaml]
-indent_size = 2 # apply indent before save
+# apply indent before save
+indent_size = 2

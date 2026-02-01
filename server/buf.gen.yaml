@@ -2,12 +2,13 @@ version: v2
 managed:
   enabled: true
   disable:
+    # not to edit import path by override option.
     - module: buf.build/googleapis/googleapis
     - module: buf.build/bufbuild/protovalidate
-    - file_option: csharp_namespace
   override:
     - file_option: go_package_prefix
-      value: github.com/hashiiiii/aquarium/gen # package path is determined relative to go.mod
+      # package path is determined relative to go.mod
+      value: github.com/hashiiiii/aquarium/gen
 inputs:
   - directory: ../api/proto
 plugins:
