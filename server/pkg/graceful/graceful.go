@@ -13,6 +13,8 @@ import (
 func WaitTerminateSignal(server *http.Server) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, os.Interrupt)
+
+	// block until a signal is received
 	sig := <-quit
 	log.Print(sig)
 
