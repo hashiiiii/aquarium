@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -17,16 +18,21 @@ import (
 func main() {
 	server, err := newServer()
 	if err != nil {
-		log.Fatal(fmt.Errorf("failed to new server: %w", err))
+		log.Fatalf("server error: %v", err)
 	}
 
 	go func() {
-		if err := server.ListenAndServe(); err != nil {
-			log.Fatal(fmt.Errorf("failed to listen and serve: %w", err))
+		if err := server.ListenAndServe(); err != http.ErrServerClosed {
+			log.Fatalf("listen and serve error: %v", err)
 		}
 	}()
 
-	graceful.WaitTerminateSignal(server)
+	if err := graceful.WaitTerminateSignal(server); err != nil {
+		log.Printf("shutdown error: %v", err)
+		os.Exit(1)
+	}
+
+	log.Print("server stopped gracefully")
 }
 
 func newServer() (*http.Server, error) {
@@ -42,7 +48,7 @@ func newServer() (*http.Server, error) {
 	// ========= mock =========
 	db, err := sql.Open("mysql", "root@tcp(localhost:3306)/")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to open db: %v", err)
 	}
 	defer db.Close()
 	mux.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +57,6 @@ func newServer() (*http.Server, error) {
 			http.Error(w, "DB connection error", http.StatusInternalServerError)
 			return
 		}
-		fmt.Println("success!!")
 	})
 	// ========================
 
