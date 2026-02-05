@@ -50,7 +50,7 @@ func newServer() (*http.Server, error) {
 	if err != nil {
 		log.Fatalf("failed to open db: %v", err)
 	}
-	defer db.Close()
+	// NOTE: mock のため db.Close() は省略（本来は graceful shutdown 時にクローズすべき）
 	mux.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
 		err = db.Ping()
 		if err != nil {
