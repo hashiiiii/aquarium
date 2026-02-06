@@ -61,7 +61,10 @@ func newServer() (*http.Server, error) {
 	// ========================
 
 	return &http.Server{
-		Addr:              ":8080",
+		Addr: ":8080",
+		// TLS は ReverseProxy 等で解除する
+		// その上で内部通信を HTTP/2 で行うには h2c が必須
+		// 標準ライブラリでは TLS が必須になってしまう
 		Handler:           h2c.NewHandler(mux, &http2.Server{}),
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      10 * time.Second,
