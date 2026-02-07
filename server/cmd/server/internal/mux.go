@@ -7,6 +7,7 @@ import (
 	"connectrpc.com/validate"
 	"github.com/hashiiiii/aquarium/gen/session/v1/sessionv1connect"
 	"github.com/hashiiiii/aquarium/internal/handler"
+	"github.com/hashiiiii/aquarium/internal/handler/interceptor/authorization"
 	"github.com/hashiiiii/aquarium/pkg/logging"
 )
 
@@ -15,6 +16,7 @@ func NewMux() (*http.ServeMux, error) {
 	opts := connect.WithInterceptors(
 		logging.NewInterceptor(),
 		validate.NewInterceptor(),
+		authorization.NewInterceptor(),
 	)
 
 	mux := http.NewServeMux()
