@@ -10,7 +10,7 @@ HS256 による JWT の発行・検証を Go 標準パッケージのみで実�
 - ペイロード `{"sub","device_id","iat","exp"}` を `encoding/json` でマーシャル
 - それぞれを `encoding/base64` の `RawURLEncoding` でエンコード
 - `header.payload` を `.` で結合
-- `crypto/hmac` + `crypto/sha256` で HMAC-SHA256 署名を生成
+- `crypto/hmac` に共通鍵と `crypto/sha256` を渡して HMAC-SHA256 署名を生成
 - 署名も `RawURLEncoding` でエンコード
 - `header.payload.signature` を返す
 
