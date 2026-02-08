@@ -12,7 +12,7 @@ HS256 による JWT の発行・検証を Go 標準パッケージのみで実�
 
 | 層 | 責務 | 知っていること | 知らないこと |
 |----|------|---------------|-------------|
-| `pkg/jwt` | JWT の署名・検証 | JWT の構造、HS256 署名、Base64url、`exp` 検証、鍵ローテーション | `device_id` の意味、ユーザーモデル、Redis |
+| `pkg/jwt` | JWT の署名・検証 | JWT の構造、HS256 署名、Base64url、`exp` 検証 | `device_id` の意味、ユーザーモデル、Redis |
 | `internal/handler/` (login) | 認証・トークン発行 | ペイロードに何を入れるか、ユーザー特定ロジック | HMAC の計算方法 |
 | `internal/handler/interceptor/` | 認可 | `device_id` の照合ロジック、Redis/DB アクセス | JWT の内部構造 |
 
@@ -24,9 +24,19 @@ package jwt
 
 type Claims map[string]any
 
-func Sign(claims Claims, secret []byte) (string, error)
-func Verify(token string, secrets [][]byte) (Claims, error)
+func Sign(claims Claims, key []byte) (string, error)
+func Verify(token string, key []byte) (Claims, error)
 ```
+
+ちなみに Claims は一般的な概念のようです。
+
+https://qiita.com/yoheimuta/items/b17bfbac17c02d410f54
+
+RFC で規定されている registered claims と private claimes というものがある。
+
+iat: issued_at の略。JWT の発行時間。
+exp: expiration time の略。JWT の有効期限。
+それ以外のもの (e.g. device_id): ユーザー定義の private claims
 
 ### 1.3 呼び出し側の使い方
 
@@ -38,12 +48,12 @@ claims := jwt.Claims{
     "iat":       time.Now().Unix(),
     "exp":       time.Now().Add(7 * 24 * time.Hour).Unix(),
 }
-token, err := jwt.Sign(claims, secret)
+token, err := jwt.Sign(claims, key)
 ```
 
 ```go
 // internal/handler/interceptor/authorization/（認可 — トークン検証）
-claims, err := jwt.Verify(token, secretKeys)
+claims, err := jwt.Verify(token, key)
 // claims から device_id を取り出し、Redis/DB の値と照合
 ```
 
@@ -63,18 +73,22 @@ claims, err := jwt.Verify(token, secretKeys)
 
 ## 3. JWT の検証（Verify）
 
-- `.` で 3 パートに分割（`strings.SplitN`）
-- `header.payload` に対して、秘密鍵で HMAC-SHA256 を再計算
+- `.` で 3 パートに分割（`strings.Split`）
+- `header.payload` に対して、共通鍵で HMAC-SHA256 を再計算
 - `hmac.Equal` で署名と比較（タイミング攻撃耐性あり）
 - ペイロードを Base64url デコード → JSON デコード
 - `exp` を `time.Now().Unix()` と比較して期限切れチェック
 
-## 4. 鍵ローテーション対応
+## 4. 鍵ローテーション
 
-- 秘密鍵を複数保持できる構造にする（`[][]byte`）
-- **発行**: 常に最新の鍵（スライスの先頭）で署名
-- **検証**: 全鍵で順に検証し、いずれかで通れば OK
-- 鍵の追加・削除は環境変数やシークレット管理で行う
+- 共通鍵は単一で管理する（複数鍵の併用は行わない）
+- ローテーション時は鍵を新しいものに切り替えるだけ
+- 旧鍵で署名された JWT は検証失敗 → 401
+- クライアントの 401 自動リトライ（`/login` 再実行）で新鍵の JWT を取得
+- ユーザー操作不要（キーペア署名による自動再ログイン）
+- 鍵の保管は環境変数やシークレット管理（AWS Secrets Manager 等）で行う
+
+> **複数鍵を持たない理由**: 本設計ではクライアントに 401 自動リトライが実装されており、再ログインにユーザー操作が不要（キーペア署名で自動）。そのため鍵切り替え時の一時的な 401 は透過的に処理され、複数鍵を併用する必要がない。
 
 ## 5. 使用するパッケージ一覧
 
