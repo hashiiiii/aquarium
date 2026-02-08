@@ -38,6 +38,10 @@ iat: issued_at の略。JWT の発行時間。
 exp: expiration time の略。JWT の有効期限。
 それ以外のもの (e.g. device_id): ユーザー定義の private claims
 
+そもそもの JWT の仕組みはこれ。
+
+https://zenn.dev/mikakane/articles/tutorial_for_jwt
+
 ### 1.3 呼び出し側の使い方
 
 ```go
