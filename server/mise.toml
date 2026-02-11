@@ -3,3 +3,9 @@ go = '1.26.0'
 golangci-lint = '2.9.0'
 "go:google.golang.org/protobuf/cmd/protoc-gen-go" = "1.36.11"
 "go:connectrpc.com/connect/cmd/protoc-gen-connect-go" = "1.19.1"
+
+[env]
+AQUA_ENVIRONMENT = 'development'
+AQUA_DEPLOYMENT = 'local'
+AQUA_SERVER_ADDR = 'localhost:8080'
+AQUA_JWT_COMMON_KEY = '+BxawOOAhH6BblWy4St/pw20rSH5AhhvNzgRcQpq0v0='

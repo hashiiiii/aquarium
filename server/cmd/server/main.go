@@ -22,18 +22,22 @@ import (
 func main() {
 	e := dotenv.New()
 
-	// TODO: CD を整備した後は Require にする
 	app, err := application.New(
-		e.Optional("AQUA_ENVIRONMENT", "development"),
-		e.Optional("AQUA_DEPLOYMENT", "local"),
+		e.Require("AQUA_ENVIRONMENT"),
+		e.Require("AQUA_DEPLOYMENT"),
 	)
 	if err != nil {
 		log.Fatalf("application error: %v", err)
 	}
 
-	c, err := config.New(app)
+	c, err := config.New(app, e)
 	if err != nil {
 		log.Fatalf("config error: %v", err)
+	}
+
+	// Dotenv のエラーはここでまとめて確認する
+	if e.Err() != nil {
+		log.Fatalf("env error: %v", err)
 	}
 
 	server, err := newServer(c)
@@ -82,7 +86,7 @@ func newServer(config config.Config) (*http.Server, error) {
 	// ========================
 
 	return &http.Server{
-		Addr: ":8080",
+		Addr: config.ServerAddr(),
 		// TLS は ReverseProxy 等で解除する
 		// その上で内部通信を HTTP/2 で行うには h2c が必須
 		// 標準ライブラリでは TLS が必須になってしまう

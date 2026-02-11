@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashiiiii/aquarium/pkg/application"
+	"github.com/hashiiiii/aquarium/pkg/dotenv"
 )
 
 type Config interface {
@@ -11,16 +12,16 @@ type Config interface {
 	ServerAddr() string
 }
 
-func New(app *application.Application) (Config, error) {
+func New(app *application.Application, e *dotenv.Dotenv) (Config, error) {
 	if app.IsLocal() {
-		c, err := newLocal()
+		c, err := newLocal(e)
 		if err != nil {
 			return nil, fmt.Errorf("failed to new local config: %w", err)
 		}
 		return c, nil
 	}
 
-	c, err := newRemote()
+	c, err := newRemote(e)
 	if err != nil {
 		return nil, fmt.Errorf("failed to new remote config: %w", err)
 	}

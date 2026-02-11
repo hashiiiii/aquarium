@@ -1,15 +1,19 @@
 package config
 
-type localConfig struct{}
+import "github.com/hashiiiii/aquarium/pkg/dotenv"
+
+type localConfig struct {
+	dotenv *dotenv.Dotenv
+}
 
 func (c *localConfig) JWTCommonKey() string {
-	return ""
+	return c.dotenv.Require("AQUA_JWT_COMMON_KEY")
 }
 
 func (c *localConfig) ServerAddr() string {
-	return ""
+	return c.dotenv.Require("AQUA_SERVER_ADDR")
 }
 
-func newLocal() (*localConfig, error) {
-	return &localConfig{}, nil
+func newLocal(e *dotenv.Dotenv) (*localConfig, error) {
+	return &localConfig{dotenv: e}, nil
 }
