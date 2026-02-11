@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -30,18 +31,19 @@ func main() {
 		log.Fatalf("application error: %v", err)
 	}
 
-	config, err := config.New(app)
+	c, err := config.New(app)
 	if err != nil {
 		log.Fatalf("config error: %v", err)
 	}
 
-	server, err := newServer(config)
+	server, err := newServer(c)
 	if err != nil {
 		log.Fatalf("server error: %v", err)
 	}
 
 	go func() {
-		if err := server.ListenAndServe(); err != http.ErrServerClosed {
+		err := server.ListenAndServe()
+		if !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("listen and serve error: %v", err)
 		}
 	}()
