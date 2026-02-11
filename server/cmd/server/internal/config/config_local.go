@@ -1,7 +1,6 @@
 package config
 
-type localConfig struct {
-}
+type localConfig struct{}
 
 func (c *localConfig) JWTCommonKey() string {
 	return ""
