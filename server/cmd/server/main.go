@@ -10,13 +10,32 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/hashiiiii/aquarium/cmd/server/internal"
+	"github.com/hashiiiii/aquarium/cmd/server/internal/config"
+	"github.com/hashiiiii/aquarium/pkg/application"
+	"github.com/hashiiiii/aquarium/pkg/dotenv"
 	"github.com/hashiiiii/aquarium/pkg/graceful"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
 
 func main() {
-	server, err := newServer()
+	e := dotenv.New()
+
+	// TODO: CD を整備した後は Require にする
+	app, err := application.New(
+		e.Optional("AQUA_ENVIRONMENT", "development"),
+		e.Optional("AQUA_DEPLOYMENT", "local"),
+	)
+	if err != nil {
+		log.Fatalf("application error: %v", err)
+	}
+
+	config, err := config.New(app)
+	if err != nil {
+		log.Fatalf("config error: %v", err)
+	}
+
+	server, err := newServer(config)
 	if err != nil {
 		log.Fatalf("server error: %v", err)
 	}
@@ -35,10 +54,10 @@ func main() {
 	log.Print("server stopped gracefully")
 }
 
-func newServer() (*http.Server, error) {
+func newServer(config config.Config) (*http.Server, error) {
 	mux := http.NewServeMux()
 
-	internalMux, err := internal.NewMux()
+	internalMux, err := internal.NewMux(config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to new internal mux: %w", err)
 	}

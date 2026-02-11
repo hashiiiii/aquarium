@@ -10,9 +10,13 @@ type Dotenv struct {
 	missing []string
 }
 
-func (e *Dotenv) Require(key string) (string, error) {
+func New() *Dotenv {
+	return &Dotenv{}
+}
+
+func (e *Dotenv) Require(key string) string {
 	if key == "" {
-		return "", fmt.Errorf("key is empty")
+		panic("key is empty")
 	}
 
 	v := os.Getenv(key)
@@ -20,15 +24,15 @@ func (e *Dotenv) Require(key string) (string, error) {
 		e.missing = append(e.missing, key)
 	}
 
-	return v, nil
+	return v
 }
 
-func (e *Dotenv) Optional(key string, fallback string) (string, error) {
+func (e *Dotenv) Optional(key string, fallback string) string {
 	if key == "" {
-		return "", fmt.Errorf("key is empty")
+		panic("key is empty")
 	}
 	if fallback == "" {
-		return "", fmt.Errorf("fallback is empty")
+		panic("fallback is empty")
 	}
 
 	v := os.Getenv(key)
@@ -36,7 +40,7 @@ func (e *Dotenv) Optional(key string, fallback string) (string, error) {
 		v = fallback
 	}
 
-	return v, nil
+	return v
 }
 
 func (e *Dotenv) Err() error {

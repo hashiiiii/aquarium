@@ -5,13 +5,14 @@ import (
 
 	"connectrpc.com/connect"
 	"connectrpc.com/validate"
+	"github.com/hashiiiii/aquarium/cmd/server/internal/config"
 	"github.com/hashiiiii/aquarium/gen/session/v1/sessionv1connect"
 	"github.com/hashiiiii/aquarium/internal/handler"
 	"github.com/hashiiiii/aquarium/internal/handler/interceptor/authorization"
 	"github.com/hashiiiii/aquarium/pkg/logging"
 )
 
-func NewMux() (*http.ServeMux, error) {
+func NewMux(config config.Config) (*http.ServeMux, error) {
 	// req: 上から, res: 下から
 	opts := connect.WithInterceptors(
 		logging.NewInterceptor(),
