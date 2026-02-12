@@ -16,14 +16,14 @@ func New(app *application.Application, e *dotenv.Dotenv) (Config, error) {
 	if app.IsLocal() {
 		c, err := newLocal(e)
 		if err != nil {
-			return nil, fmt.Errorf("failed to new local config: %w", err)
+			return nil, fmt.Errorf("failed to create local config: %w", err)
 		}
 		return c, nil
 	}
 
 	c, err := newRemote(e)
 	if err != nil {
-		return nil, fmt.Errorf("failed to new remote config: %w", err)
+		return nil, fmt.Errorf("failed to create remote config: %w", err)
 	}
 	return c, nil
 }

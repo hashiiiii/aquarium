@@ -7,11 +7,11 @@ type remoteConfig struct {
 }
 
 func (c *remoteConfig) JWTCommonKey() string {
-	return ""
+	return "not implemented"
 }
 
 func (c *remoteConfig) ServerAddr() string {
-	return ""
+	return "not implemented"
 }
 
 func newRemote(e *dotenv.Dotenv) (*remoteConfig, error) {

@@ -20,6 +20,10 @@ var environments = map[string]Environment{
 	string(Test):        Test,
 }
 
+func (e Environment) String() string {
+	return string(e)
+}
+
 type Deployment string
 
 const (
@@ -30,6 +34,10 @@ const (
 var deployments = map[string]Deployment{
 	string(Remote): Remote,
 	string(Local):  Local,
+}
+
+func (d Deployment) String() string {
+	return string(d)
 }
 
 type Application struct {
