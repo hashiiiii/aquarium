@@ -33,8 +33,9 @@ $ buf curl --schema ../api/proto/session/v1/session.proto --data '{"device_id": 
 ```
 # Link
 
-|Link|Comment|
+|Link| Comment |
 |-|-|
 |https://buf.build/docs/configuration/v2/buf-gen-yaml/|buf.gen.yaml|
 |https://buf.build/docs/reference/cli/buf/#subcommands|Buf CLI Subcommands|
 |https://connectrpc.com/docs/go/getting-started#make-requests|Make requests with Connect protocol|
+|https://qiita.com/_ken_/items/8292c23a5c3236af14ab|How to ensure a type satisfies a specific interface at compile time|
