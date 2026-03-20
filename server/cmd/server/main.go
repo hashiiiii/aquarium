@@ -60,10 +60,10 @@ func main() {
 	log.Print("server stopped gracefully")
 }
 
-func newServer(config config.Config) (*http.Server, error) {
+func newServer(c config.Config) (*http.Server, error) {
 	mux := http.NewServeMux()
 
-	internalMux, err := internal.NewMux(config)
+	internalMux, err := internal.NewMux(c)
 	if err != nil {
 		return nil, fmt.Errorf("failed to new internal mux: %w", err)
 	}
@@ -86,7 +86,7 @@ func newServer(config config.Config) (*http.Server, error) {
 	// ========================
 
 	return &http.Server{
-		Addr: config.ServerAddr(),
+		Addr: c.ServerAddr(),
 		// TLS は ReverseProxy 等で解除する
 		// その上で内部通信を HTTP/2 で行うには h2c が必須
 		// 標準ライブラリでは TLS が必須になってしまう
