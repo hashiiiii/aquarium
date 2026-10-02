@@ -1,0 +1,10 @@
+# Used by scripts/generate-reef.sh in its isolated schema root (no buf.lock).
+version: v2
+modules:
+  - path: .
+lint:
+  use:
+    - STANDARD
+breaking:
+  use:
+    - FILE
