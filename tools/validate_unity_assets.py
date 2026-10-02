@@ -3,6 +3,7 @@
 import json
 import re
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,6 +46,11 @@ if "- enabled: 1\n    path: Assets/Aquarium/Scenes/AquariumDemo.unity" not in bu
 for shader in ("ReefSolid", "ReefSprite"):
     if not (DEMO / f"Presentation/Resources/{shader}.shader").exists():
         errors.append(f"Missing runtime-retained shader: {shader}")
+linker = ET.parse(DEMO / "Presentation/link.xml").getroot()
+preserved = {node.attrib["fullname"] for node in linker.findall("assembly/type")}
+for component in ("MeshFilter", "MeshRenderer", "BoxCollider", "SphereCollider", "CapsuleCollider", "MeshCollider"):
+    if "UnityEngine." + component not in preserved:
+        errors.append(f"Missing primitive stripping protection: {component}")
 if errors:
     print("\n".join(errors), file=sys.stderr)
     sys.exit(1)
