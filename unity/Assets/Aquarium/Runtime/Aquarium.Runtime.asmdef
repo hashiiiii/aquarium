@@ -1,0 +1,6 @@
+{
+  "name": "Aquarium.Runtime",
+  "rootNamespace": "Aquarium.Runtime",
+  "references": ["Aquarium.Core", "Aquarium.Presentation", "Unity.InputSystem", "UnityEngine.UI"],
+  "autoReferenced": true
+}

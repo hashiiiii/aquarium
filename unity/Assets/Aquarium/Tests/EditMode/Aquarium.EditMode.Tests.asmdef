@@ -1,0 +1,8 @@
+{
+  "name": "Aquarium.EditMode.Tests",
+  "rootNamespace": "Aquarium.Tests",
+  "references": ["Aquarium.Core"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}
