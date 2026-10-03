@@ -70,6 +70,7 @@ namespace Aquarium.Runtime
         private void Update()
         {
             if (!initialized) return;
+            tank.Tick();
             if (Pointer.current != null && Pointer.current.press.wasPressedThisFrame)
             {
                 var position = Pointer.current.position.ReadValue();

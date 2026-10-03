@@ -97,12 +97,12 @@ HUD にも ONLINE / OFFLINE を明示する。
 
 ## 構成
 
-- `Assets/Aquarium/Online`: Unity 非依存 DTO、Connect/JSON transport、session、厳密な応答検証、未確定要求ジャーナル
-- `Assets/Aquarium/Runtime/OnlineAquariumGame.cs`: 接続設定、ライフサイクル、操作の結線、既存の TankView への表示投影
-- `Assets/Aquarium/Runtime/OnlineAquariumHud.cs`: server catalogue / snapshot から作る uGUI
-- `Assets/Aquarium/Runtime/UnityOnlineJsonCodec.cs`: protobuf JSON の64bit整数文字列を維持する JsonUtility adapter
-- `Assets/Aquarium/Tests/PlayMode/AquariumOnlinePresentationTests.cs`: HUD、接続状態、連打、server catalogue、codec、scene/session 結線
-- `tools/Aquarium.Online.Tests`: .NET の protocol/session/journal テストとローカル Go server を使った検証
+- `Assets/Aquarium/Outgame/Client/Online`: Connect/JSON transport、session、厳密な応答検証、未確定要求ジャーナル
+- `Assets/Aquarium/Runtime/OnlineAquariumGame.cs`: in-game root の Update と server session の結線
+- `Assets/Aquarium/Runtime/OnlineAquariumHud.cs`: server catalogue / snapshot から作る in-game uGUI
+- `Assets/Aquarium/Outgame/Client/Online/UnityOnlineJsonCodec.cs`: protobuf JSON の64bit整数文字列を維持する JsonUtility adapter
+- `Assets/Aquarium/Tests/EditMode/OutgameUseCaseClientTests.cs`: fake gateway の UseCase テストと fake transport の Client adapter テスト
+- 既存の `AquariumPresentationTests` / `AquariumOnlinePresentationTests` は in-game 既存テスト。outgame の Presenter/View/scene integration tests は維持しない。
 
 ## 検証
 
@@ -111,12 +111,12 @@ HUD にも ONLINE / OFFLINE を明示する。
 ```sh
 python3 tools/validate_unity_assets.py
 dotnet run --project tools/Aquarium.Core.Tests
-sh tools/run-online-tests.sh
 ```
 
-オンラインテストの詳細と live server 検証のオプションは [テストガイド](../tools/Aquarium.Online.Tests/README.md) を参照。
-Unity Editor の **Test Runner → EditMode / PlayMode** も両方実行する。ライセンス不要テストの成功は
-Unity API、URP描画、実入力、native player の検証を代替しない。実施した検証と未実施の検証は PR に区別して記録する。
+Go サーバーの回帰テストは `cd server && go test ./...` で実行する。Unity Editor の
+**Test Runner → EditMode / PlayMode** は既存 in-game テストと UseCase / Client adapter tests を実行する。
+画面遷移や View 結線は自動テストの対象にせず、必要な場合は Editor で一度確認して結果を PR に記録する。
+ライセンス不要テストの成功は Unity API、URP 描画、実入力、native player の検証を代替しない。
 
 ### 手動の受け入れチェック
 

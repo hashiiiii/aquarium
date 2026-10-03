@@ -179,7 +179,7 @@ namespace Aquarium.Presentation
             }
         }
 
-        void Update()
+        public void Tick()
         {
             if (!initialized) return;
             float t = Time.time, dt = Mathf.Min(Time.deltaTime, .1f);

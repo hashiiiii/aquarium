@@ -33,4 +33,4 @@ jobs:
           DOTNET_NOLOGO: '1'
         run: dotnet run --project tools/Aquarium.Core.Tests/Aquarium.Core.Tests.csproj --configuration Release
       - name: Validate Unity asset structure (not Unity import)
-        run: python3 tools/validate_unity_assets.py
+        run: dotnet run --project tools/Aquarium.AssetValidator/Aquarium.AssetValidator.csproj --configuration Release

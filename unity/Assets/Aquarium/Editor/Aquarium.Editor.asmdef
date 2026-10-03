@@ -1,6 +1,13 @@
 {
   "name": "Aquarium.Editor",
   "rootNamespace": "Aquarium.Editor",
-  "includePlatforms": ["Editor"],
-  "autoReferenced": true
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": true,
+  "references": [
+    "Aquarium.Outgame.Client",
+    "Aquarium.InGame",
+    "VContainer"
+  ]
 }

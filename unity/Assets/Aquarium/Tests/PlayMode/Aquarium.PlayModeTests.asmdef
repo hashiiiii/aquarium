@@ -2,12 +2,18 @@
   "name": "Aquarium.PlayModeTests",
   "rootNamespace": "Aquarium.Tests",
   "references": [
-    "Aquarium.Core",
-    "Aquarium.Runtime",
-    "Aquarium.Presentation",
+    "Aquarium.Outgame.Domain",
+    "Aquarium.Outgame.Application",
+    "Aquarium.Outgame.Client",
+    "Aquarium.InGame",
     "UnityEngine.UI",
     "Unity.InputSystem",
-    "Aquarium.Online"
+    "R3.Unity",
+    "VContainer"
+  ],
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "R3.dll"
   ],
   "optionalUnityReferences": [
     "TestAssemblies"

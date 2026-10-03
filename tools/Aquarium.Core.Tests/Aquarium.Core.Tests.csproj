@@ -7,7 +7,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../../unity/Assets/Aquarium/Core/*.cs" Link="Core/%(Filename)%(Extension)" />
+    <Compile Include="../../unity/Assets/Aquarium/Outgame/Domain/*.cs" Link="Core/%(Filename)%(Extension)" />
     <Compile Include="../../unity/Assets/Aquarium/Runtime/AquariumFileStore.cs" Link="Runtime/AquariumFileStore.cs" />
     <Compile Include="../../unity/Assets/Aquarium/Runtime/AquariumRecovery.cs" Link="Runtime/AquariumRecovery.cs" />
   </ItemGroup>

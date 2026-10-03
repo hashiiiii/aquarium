@@ -204,7 +204,7 @@ namespace Aquarium.Runtime
             }
         }
 
-        private void Update() => UpdateSafeArea();
+        public void Tick() => UpdateSafeArea();
 
         private void UpdateSafeArea()
         {
