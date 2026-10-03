@@ -15,22 +15,23 @@ namespace Aquarium.Outgame.Client
         private readonly ReefApiClient client;
 
         public AuthoritativeAquariumGateway(AquariumConnectionSettings settings)
-            : this(settings, new UnityOnlineJsonCodec(), new HttpClientOnlineTransport(), ownsTransport: true)
         {
+            var transport = new HttpClientOnlineTransport();
+            ownedTransport = transport;
+            client = CreateClient(settings, new UnityOnlineJsonCodec(), transport);
         }
 
         public AuthoritativeAquariumGateway(AquariumConnectionSettings settings, IOnlineJsonCodec codec,
             IOnlineTransport transport)
-            : this(settings, codec, transport, ownsTransport: false)
         {
+            client = CreateClient(settings, codec, transport);
         }
 
-        private AuthoritativeAquariumGateway(AquariumConnectionSettings settings, IOnlineJsonCodec codec,
-            IOnlineTransport transport, bool ownsTransport)
+        private static ReefApiClient CreateClient(AquariumConnectionSettings settings, IOnlineJsonCodec codec,
+            IOnlineTransport transport)
         {
             var options = new DevServerOptions(settings.Endpoint, settings.DevelopmentPlayer);
-            ownedTransport = ownsTransport ? transport as IDisposable : null;
-            client = new ReefApiClient(options, codec, transport);
+            return new ReefApiClient(options, codec, transport);
         }
 
         public async Task<AquariumModel> GetAquariumAsync(CancellationToken cancellationToken)
