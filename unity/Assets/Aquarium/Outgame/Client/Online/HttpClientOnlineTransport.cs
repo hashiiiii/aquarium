@@ -14,12 +14,10 @@ namespace Aquarium.Online
         private readonly HttpClient client;
         private readonly TimeSpan requestTimeout;
 
-        public HttpClientOnlineTransport(TimeSpan? timeout = null)
+        public HttpClientOnlineTransport()
         {
             // Do not send the dev identity to redirects or a configured system proxy.
-            requestTimeout = timeout ?? TimeSpan.FromSeconds(15);
-            if (requestTimeout <= TimeSpan.Zero || requestTimeout.TotalMilliseconds > int.MaxValue)
-                throw new ArgumentOutOfRangeException(nameof(timeout));
+            requestTimeout = TimeSpan.FromSeconds(15);
             var handler = new HttpClientHandler { AllowAutoRedirect = false, UseProxy = false };
             client = new HttpClient(handler) { Timeout = Timeout.InfiniteTimeSpan };
         }

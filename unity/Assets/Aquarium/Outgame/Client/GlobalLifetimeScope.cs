@@ -1,4 +1,6 @@
 using Aquarium.Outgame.Application;
+using Aquarium.Online;
+using Aquarium.Runtime;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -28,6 +30,8 @@ namespace Aquarium.Outgame.Client
             if (connectionSettings == null)
                 throw new System.InvalidOperationException("GlobalLifetimeScope requires AquariumConnectionSettings.");
             builder.RegisterInstance(connectionSettings);
+            builder.Register<UnityOnlineJsonCodec>(Lifetime.Singleton).As<IOnlineJsonCodec>();
+            builder.Register<HttpClientOnlineTransport>(Lifetime.Singleton).As<IOnlineTransport>();
             builder.Register<AuthoritativeAquariumGateway>(Lifetime.Singleton).As<IGateway>();
         }
 
