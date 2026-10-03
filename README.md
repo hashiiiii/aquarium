@@ -2,21 +2,19 @@
 
 HD-2D 調の放置型育成ゲームです。
 
-## Unity で遊ぶ: First Reef
+## Unity の起動フロー
 
-Unity **6000.3.2f1** で `unity/` を開き、**Aquarium → Open First Reef** から Play。
-給餌・掃除・3種の仲間・成長・pearls 回収・ローカル保存・最大8時間のオフライン進行を実装しています。
-新デモはサーバーや有料の画像制作サービスに依存しません。
+Unity **6000.6.4f1** で `unity/` を開き、Play すると **Title → Home → Aquarium** の順に進みます。
+Title と Home がアウトゲーム、Aquarium がサーバー権威型のインゲームです。
+ローカルで動かす場合は、先に Go 開発サーバーを起動してください。
 
-起動方法、操作、保存/復旧、検証、現在の制約は [First Reef ガイド](docs/first-reef.md) を参照してください。
+オンラインの起動方法、再接続、検証、現在の制約は [オンラインガイド](docs/online-first-reef.md) を参照してください。
 
 ## ローカルサーバー接続: Online First Reef
 
-Go の開発サーバーを起動し、Unity の **Aquarium → Open Online First Reef** から Play。
+Go の開発サーバーは [サーバーガイド](server/docs/first-reef.md) に従って起動します。
 成長・所持 pearls・回収・購入はサーバーで計算し、Unity は snapshot を表示します。
 上記オフラインデモとは保存を分離し、通信不能時にローカル報酬へ切り替えません。
-
-[オンライン起動・再接続・検証ガイド](docs/online-first-reef.md) / [サーバーガイド](server/docs/first-reef.md)
 
 これは同じ PC 上の開発接続です。本番認証・外部公開・スマートフォン接続には対応していません。
 
@@ -59,4 +57,3 @@ Diffuse map は [PixelLab](https://www.pixellab.ai/) の [Simple Creator](https:
 - Export ボタンを押す
 
 ## Terrain に設定する
-

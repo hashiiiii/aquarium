@@ -6,7 +6,7 @@ WebGL、スマートフォン実機、クラウド同期は対象外です。
 
 ## 起動
 
-1. Go 1.26.x と Unity **6000.3.2f1** を用意する。Unity パッケージの解決を待つ。
+1. Go 1.26.x と Unity **6000.6.4f1** を用意する。Unity パッケージの解決を待つ。
 2. リポジトリルートから別ターミナルで開発サーバーを起動する。
 
    ```sh
@@ -102,21 +102,20 @@ HUD にも ONLINE / OFFLINE を明示する。
 - `Assets/Aquarium/Runtime/OnlineAquariumHud.cs`: server catalogue / snapshot から作る in-game uGUI
 - `Assets/Aquarium/Outgame/Client/Online/UnityOnlineJsonCodec.cs`: protobuf JSON の64bit整数文字列を維持する JsonUtility adapter
 - `Assets/Aquarium/Tests/EditMode/OutgameUseCaseClientTests.cs`: fake gateway の UseCase テストと fake transport の Client adapter テスト
-- 既存の `AquariumPresentationTests` / `AquariumOnlinePresentationTests` は in-game 既存テスト。outgame の Presenter/View/scene integration tests は維持しない。
+- Maintained Unity EditMode tests cover only UseCase behavior and Client adapter boundaries.
 
 ## 検証
 
 リポジトリルートから、Unity ライセンス不要の構造・ロジック検証:
 
 ```sh
-python3 tools/validate_unity_assets.py
-dotnet run --project tools/Aquarium.Core.Tests
+dotnet run --project tools/Aquarium.AssetValidator/Aquarium.AssetValidator.csproj --configuration Release
 ```
 
 Go サーバーの回帰テストは `cd server && go test ./...` で実行する。Unity Editor の
-**Test Runner → EditMode / PlayMode** は既存 in-game テストと UseCase / Client adapter tests を実行する。
-画面遷移や View 結線は自動テストの対象にせず、必要な場合は Editor で一度確認して結果を PR に記録する。
-ライセンス不要テストの成功は Unity API、URP 描画、実入力、native player の検証を代替しない。
+**Test Runner → EditMode** で実行する維持対象は UseCase と Client adapter の境界テストだけです。
+画面遷移、Presenter/View 結線、in-game 表示の自動テストは維持しません。
+構造検証の成功は Unity API、URP 描画、実入力、native player の検証を代替しない。
 
 ### 手動の受け入れチェック
 

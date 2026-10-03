@@ -1,4 +1,4 @@
-# Run through scripts/generate-reef.sh, which supplies a clean schema root and
+# Run through cmd/reef-codegen, which supplies a clean schema root and
 # excludes the older session/auth prototype's Buf configuration and lock file.
 version: v2
 plugins:
