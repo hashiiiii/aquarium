@@ -1,0 +1,56 @@
+name: Aquarium server
+
+on:
+  pull_request:
+    paths:
+      - 'server/**'
+      - 'api/**'
+      - '.github/workflows/aquarium-server.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'server/**'
+      - 'api/**'
+      - '.github/workflows/aquarium-server.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+      - name: Download and verify dependencies
+        run: |
+          go mod download
+          go mod verify
+      - name: Check Go formatting for new game server
+        run: |
+          files=$(gofmt -l internal/reef internal/handler/reef.go internal/handler/reef_test.go cmd/reef-local)
+          if [ -n "$files" ]; then printf '%s\n' "$files"; exit 1; fi
+      - name: Test all packages with race detector
+        run: go test -race -count=1 ./...
+      - name: Vet and build all packages
+        run: |
+          go vet ./...
+          go build ./...
+      - name: Install pinned schema tools
+        run: |
+          go install github.com/bufbuild/buf/cmd/buf@v1.66.0
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.11
+          go install connectrpc.com/connect/cmd/protoc-gen-connect-go@v1.19.1
+      - name: Verify First Reef generated code
+        run: |
+          sh scripts/generate-reef.sh
+          git diff --exit-code -- gen/aquarium

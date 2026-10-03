@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package aquarium.v1;
+
+option go_package = "github.com/hashiiiii/aquarium/gen/aquarium/v1;aquariumv1";
+
+// AquariumService accepts player intent only. The server owns identity, time,
+// simulation rules, balances, growth, and revisions. GetAquarium advances time.
+service AquariumService {
+  rpc GetAquarium(GetAquariumRequest) returns (GetAquariumResponse);
+  rpc ApplyCommand(ApplyCommandRequest) returns (ApplyCommandResponse);
+  rpc GetCatalog(GetCatalogRequest) returns (GetCatalogResponse);
+}
+
+message GetAquariumRequest {}
+
+message GetAquariumResponse {
+  AquariumState state = 1;
+}
+
+enum Action {
+  ACTION_UNSPECIFIED = 0;
+  ACTION_FEED = 1;
+  ACTION_CLEAN = 2;
+  ACTION_COLLECT = 3;
+  ACTION_ADOPT = 4;
+}
+
+message ApplyCommandRequest {
+  // 1..128 ASCII letters, digits, underscores or hyphens. Generate a new ID for
+  // each logical command. A retry must repeat every field unchanged.
+  string request_id = 1;
+  // Use the revision from the last snapshot. Zero is invalid. After an ABORTED
+  // conflict, fetch a new snapshot and send a new command ID.
+  uint64 expected_revision = 2;
+  Action action = 3;
+  // Required for ADOPT; must be empty for all other actions.
+  string species_id = 4;
+}
+
+message ApplyCommandResponse {
+  AquariumState state = 1;
+  // False is an accepted gameplay no-op (for example, insufficient pearls),
+  // not a transport error. It still consumes a revision and stores a receipt.
+  bool success = 2;
+  string message = 3;
+  int64 amount = 4;
+  AdvanceResult advance = 5;
+  // Replays return the ORIGINAL result and snapshot, which may be older than
+  // current state. Fetch GetAquarium if a fresh snapshot is needed.
+  bool replayed = 6;
+}
+
+message AquariumState {
+  uint32 version = 1;
+  uint64 revision = 2;
+  int64 last_updated_at_unix_ms = 3;
+  int64 pearls = 4;
+  double fullness = 5;
+  double cleanliness = 6;
+  repeated Creature creatures = 7;
+}
+
+message Creature {
+  string species_id = 1;
+  double growth_hours = 2;
+  double pending_pearls = 3;
+}
+
+message AdvanceResult {
+  double elapsed_seconds = 1;
+  double simulated_seconds = 2;
+  bool clock_rolled_back = 3;
+  bool was_capped = 4;
+}
+
+message GetCatalogRequest {}
+
+message GetCatalogResponse {
+  repeated SpeciesDefinition species = 1;
+  SimulationRules rules = 2;
+}
+
+message SpeciesDefinition {
+  string id = 1;
+  string display_name = 2;
+  int64 price = 3;
+  double pearls_per_care_hour = 4;
+  double mature_after_care_hours = 5;
+}
+
+message SimulationRules {
+  uint32 capacity = 1;
+  int64 wallet_capacity = 2;
+  double reward_capacity = 3;
+  double offline_cap_seconds = 4;
+  double fullness_loss_per_hour = 5;
+  double cleanliness_loss_per_hour = 6;
+  double care_threshold = 7;
+  uint32 replay_capacity = 8;
+}
