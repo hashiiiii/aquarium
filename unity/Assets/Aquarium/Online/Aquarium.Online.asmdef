@@ -1,0 +1,7 @@
+{
+  "name": "Aquarium.Online",
+  "rootNamespace": "Aquarium.Online",
+  "references": [],
+  "autoReferenced": true,
+  "noEngineReferences": true
+}

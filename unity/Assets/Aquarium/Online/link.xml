@@ -1,0 +1,4 @@
+<linker>
+  <!-- DTO fields are read by JsonUtility rather than managed field references. -->
+  <assembly fullname="Aquarium.Online" preserve="all" />
+</linker>

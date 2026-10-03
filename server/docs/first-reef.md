@@ -113,17 +113,21 @@ OS/ディスク障害に対する保証は filesystem の durability に依存�
 network filesystem、複数レプリカ、production 用 DB/バックアップ/マイグレーションは対象外です。
 MySQL へ移行する場合も、状態 revision と idempotency receipt を同一 DB transaction で更新する必要があります。
 
-## Unity への接続手順（未実装）
+## Unity への接続
 
-Unity PR #1 はローカル保存のオフライン試作です。この PR は Unity をオンライン化しません。
-オンラインモードの実装時は:
+Unity の **Aquarium → Open Online First Reef** から、別シーンの開発用オンラインクライアントを起動できます。
+[オンラインガイド](../../docs/online-first-reef.md)を参照してください。
+Connect unary JSON を使用し、DTO と JSON codec / HTTP transport を分離しています。
 
-1. サーバーの protobuf から対応する C# client を生成し、Unity 対象プラットフォームに適した gRPC/gRPC-Web transport を選ぶ
-2. 起動/復帰時に GetAquarium、カタログを取得し、サーバー snapshot を view model に反映
-3. UI 操作を ApplyCommand に変換。request ID と revision を保存し、曖昧な失敗時は同じ request を再送
-4. snapshot の revision を比較し、古いレスポンスで新しい状態を上書きしない
-5. オンライン中は Unity の `AquariumSimulation.AdvanceTo` とローカル報酬加算を止める。表示用の補間は可能だが、通貨や購入可否の決定には使わない
-6. 通信不能時は接続待ち/再試行を表示する。ローカル save をサーバーに無条件 upload したり、オフライン報酬を再加算しない
+- GetCatalog / GetAquarium のサーバー snapshot から表示を作成
+- ApplyCommand の request ID・revision・payload を送信前に記録し、通信結果が不明な場合は同じ操作を再送
+- revision 競合時は最新状態へ更新して、次の操作をユーザーが選び直す
+- 古い replay snapshot による巻き戻しを防止
+- オンラインシーンではローカル AdvanceTo / 保存ファイルからの報酬加算を行わない
+- 切断時は状態と操作を保留して再接続。オフライン save の upload は行わない
+
+オフラインデモも独立して残しています。オンライン接続は同じマシン上の Editor / desktop 開発ビルド向けです。
+実機 / WebGL / 本番サービス向けの transport・認証・公開 endpoint は別途必要です。
 
 開発 player ヘッダーを本番クライアントに組み込まないでください。
 公開前に、鍵の所有証明と replay-resistant な login、検証済み session、account recovery、TLS、rate limiting、

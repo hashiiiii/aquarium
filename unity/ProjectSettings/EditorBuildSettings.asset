@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Aquarium/Scenes/AquariumDemo.unity
     guid: 645a974777bf71fc35fef60dadd15950
   - enabled: 0
+    path: Assets/Aquarium/Scenes/AquariumOnline.unity
+    guid: 9419be0b73894d2b9e69f1b8ff3a373f
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:

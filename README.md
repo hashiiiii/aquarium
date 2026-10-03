@@ -10,6 +10,16 @@ Unity **6000.3.2f1** で `unity/` を開き、**Aquarium → Open First Reef** �
 
 起動方法、操作、保存/復旧、検証、現在の制約は [First Reef ガイド](docs/first-reef.md) を参照してください。
 
+## ローカルサーバー接続: Online First Reef
+
+Go の開発サーバーを起動し、Unity の **Aquarium → Open Online First Reef** から Play。
+成長・所持 pearls・回収・購入はサーバーで計算し、Unity は snapshot を表示します。
+上記オフラインデモとは保存を分離し、通信不能時にローカル報酬へ切り替えません。
+
+[オンライン起動・再接続・検証ガイド](docs/online-first-reef.md) / [サーバーガイド](server/docs/first-reef.md)
+
+これは同じ PC 上の開発接続です。本番認証・外部公開・スマートフォン接続には対応していません。
+
 以下は既存のアセット制作メモです。新デモの起動にこの制作フローは必要ありません。
 
 ## Init Image を用意する

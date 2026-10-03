@@ -1,0 +1,46 @@
+name: Aquarium online integration
+
+on:
+  pull_request:
+    paths:
+      - 'unity/Assets/Aquarium/**'
+      - 'server/**'
+      - 'api/**'
+      - 'tools/Aquarium.Online.Tests/**'
+      - 'tools/run-online-tests.sh'
+      - '.github/workflows/aquarium-online.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'unity/Assets/Aquarium/**'
+      - 'server/**'
+      - 'api/**'
+      - 'tools/Aquarium.Online.Tests/**'
+      - 'tools/run-online-tests.sh'
+      - '.github/workflows/aquarium-online.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  live-client-server:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Verify Go dependencies
+        working-directory: server
+        run: |
+          go mod download
+          go mod verify
+      - name: Run real online client against persistent Go subprocess
+        run: sh tools/run-online-tests.sh

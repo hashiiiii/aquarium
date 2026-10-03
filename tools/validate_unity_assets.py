@@ -36,10 +36,14 @@ for name, data in assemblies.items():
     for reference in data.get("references", []):
         if reference.startswith("Aquarium.") and reference not in assemblies:
             errors.append(f"Unresolved assembly: {name} -> {reference}")
-scene = DEMO / "Scenes/AquariumDemo.unity"
-for guid in re.findall(r"guid: ([0-9a-f]{32})", scene.read_text()):
-    if guid not in guids:
-        errors.append(f"Unresolved demo scene GUID: {guid}")
+for scene_name in ("AquariumDemo.unity", "AquariumOnline.unity"):
+    scene = DEMO / "Scenes" / scene_name
+    if not scene.exists():
+        errors.append(f"Missing scene: {scene_name}")
+        continue
+    for guid in re.findall(r"guid: ([0-9a-f]{32})", scene.read_text()):
+        if guid not in guids:
+            errors.append(f"Unresolved {scene_name} GUID: {guid}")
 build = (ROOT / "unity/ProjectSettings/EditorBuildSettings.asset").read_text()
 if "- enabled: 1\n    path: Assets/Aquarium/Scenes/AquariumDemo.unity" not in build:
     errors.append("Playable scene is not enabled in build settings")

@@ -1,6 +1,12 @@
 {
   "name": "Aquarium.Runtime",
   "rootNamespace": "Aquarium.Runtime",
-  "references": ["Aquarium.Core", "Aquarium.Presentation", "Unity.InputSystem", "UnityEngine.UI"],
+  "references": [
+    "Aquarium.Core",
+    "Aquarium.Presentation",
+    "Unity.InputSystem",
+    "UnityEngine.UI",
+    "Aquarium.Online"
+  ],
   "autoReferenced": true
 }
