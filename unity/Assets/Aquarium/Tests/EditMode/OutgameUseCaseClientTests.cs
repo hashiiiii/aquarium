@@ -31,7 +31,7 @@ namespace Aquarium.Tests
         public async Task GatewaySendsGetRequestAndMapsAuthoritativeSnapshot()
         {
             var settings = ScriptableObject.CreateInstance<AquariumConnectionSettings>();
-            var transport = new FakeTransport(new OnlineHttpResponse(200,
+            using var transport = new FakeTransport(new OnlineHttpResponse(200,
                 "{\"state\":{\"version\":1,\"revision\":\"17\",\"lastUpdatedAtUnixMs\":\"1790985600000\",\"pearls\":\"42\",\"fullness\":75,\"cleanliness\":85,\"creatures\":[{\"speciesId\":\"tide_sprite\"},{\"speciesId\":\"moon_jelly\"}]}}"));
             using var gateway = new AuthoritativeAquariumGateway(settings, new UnityOnlineJsonCodec(), transport);
             using var cancellation = new CancellationTokenSource();
@@ -54,7 +54,7 @@ namespace Aquarium.Tests
         public void GatewayPreservesTypedServerErrors()
         {
             var settings = ScriptableObject.CreateInstance<AquariumConnectionSettings>();
-            var transport = new FakeTransport(new OnlineHttpResponse(503,
+            using var transport = new FakeTransport(new OnlineHttpResponse(503,
                 "{\"code\":\"unavailable\",\"message\":\"offline\"}"));
             using var gateway = new AuthoritativeAquariumGateway(settings, new UnityOnlineJsonCodec(), transport);
 
@@ -63,6 +63,21 @@ namespace Aquarium.Tests
 
             Assert.That(exception.Code, Is.EqualTo("unavailable"));
             Assert.That(exception.StatusCode, Is.EqualTo(503));
+            UnityEngine.Object.DestroyImmediate(settings);
+        }
+
+        [Test]
+        public void GatewayDoesNotDisposeTransportOwnedByTheContainer()
+        {
+            var settings = ScriptableObject.CreateInstance<AquariumConnectionSettings>();
+            using var transport = new FakeTransport(new OnlineHttpResponse(200, "{}"));
+            var gateway = new AuthoritativeAquariumGateway(settings, new UnityOnlineJsonCodec(), transport);
+
+            gateway.Dispose();
+
+            Assert.That(transport.IsDisposed, Is.False);
+            transport.Dispose();
+            Assert.That(transport.IsDisposed, Is.True);
             UnityEngine.Object.DestroyImmediate(settings);
         }
 
@@ -78,9 +93,10 @@ namespace Aquarium.Tests
             }
         }
 
-        private sealed class FakeTransport : IOnlineTransport
+        private sealed class FakeTransport : IOnlineTransport, IDisposable
         {
             private readonly OnlineHttpResponse response;
+            public bool IsDisposed { get; private set; }
             public Uri Endpoint { get; private set; }
             public string Player { get; private set; }
             public string Body { get; private set; }
@@ -97,6 +113,8 @@ namespace Aquarium.Tests
                 Token = cancellationToken;
                 return Task.FromResult(response);
             }
+
+            public void Dispose() => IsDisposed = true;
         }
     }
 }
