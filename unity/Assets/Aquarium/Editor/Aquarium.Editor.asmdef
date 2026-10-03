@@ -1,0 +1,6 @@
+{
+  "name": "Aquarium.Editor",
+  "rootNamespace": "Aquarium.Editor",
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}

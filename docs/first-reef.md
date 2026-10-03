@@ -1,0 +1,104 @@
+# First Reef: オフライン育成プロトタイプ
+
+Unity 側で、海洋ファンタジーの仲間を眺めながら育てる最初のゲームループを実装しました。
+既存の `Main.unity`、Buddy、地形、制作メモは残し、新しいデモを独立したシーンにしています。
+
+## 起動
+
+1. Unity Hub で `unity/` を開く。プロジェクト指定版は **6000.3.2f1** です。
+2. Package Manager の解決が完了するまで待つ。既存の URP 17.3 / Input System 1.17 を使用します。
+3. メニュー **Aquarium → Open First Reef** を選択する。
+   または `Assets/Aquarium/Scenes/AquariumDemo.unity` を開く。
+4. Play を押す。Game View はまず **1280 × 720 / 横向き** で確認してください。
+
+このデモは自動生成のピクセルキャラクターと 3D の海底を使います。
+PixelLab、画像生成サービス、ゲームサーバー、アカウント認証、追加の有料アセットは不要です。
+初回の Unity パッケージ取得にはネット接続が必要です。実行中のゲームはネット通信しません。
+既存のアートを使うシーンは Git LFS に依存します。通常のクローンでアートがポインターのままなら
+`git lfs pull` が必要ですが、新デモの表示にはこれらのテクスチャを参照していません。
+
+## 遊び方
+
+- Tide Sprite 1体と **30 pearls** で開始。Moon Jelly をすぐに迎えられます。
+- **FEED** は満腹度 +25、**CLEAN** は水質 +30。どちらも無料です。
+- 満腹度と水質がともに 20 を超えている間、仲間が成長して pearls を貯めます。
+  世話の質が高いほど効率が上がります。HUD の「care hour」はその効率で補正した育成時間です。
+- **COLLECT** で各仲間の整数部分の pearls を回収。端数は残ります。
+- 右上から Moon Jelly（30）と Coral Drake（60）を迎え、最大3種を育てます。
+  すでにいる仲間のボタン、または水槽内の仲間をクリックすると詳細を確認できます。
+- 放置で死ぬことはありません。世話が不足すると育成が休止します。
+- オフライン進行は1回の不在につき最大 **8時間**。時計が戻った場合は保存済み時刻に
+  追いつくまで育成を停止し、同じ時間を重複して加算しません。
+- 水質は1時間に3、満腹度は6減少。種ごとの成熟には12 / 16 / 24 care hours が必要です。
+  1体の未回収上限は100、所持上限は9999です。
+
+マウス・タッチで操作できる uGUI ボタンと、新 Input System を使用しています。
+キーボード/ゲームパッドの標準 UI ナビゲーションも接続していますが、各実機での操作確認は別途必要です。
+現時点のレイアウトはデスクトップ横画面向けです。日本語フォント同梱・ローカライズと
+スマートフォン縦画面の調整は次の段階です。
+
+## 保存と復旧
+
+`Application.persistentDataPath/aquarium-v1.json` に保存します。
+操作直後、30秒ごと、フォーカス離脱、アプリ休止、終了時に保存します。
+
+- 同じディレクトリに一時ファイルを書き、flush 後に `File.Replace` で入れ替えます。
+- 前回の保存は `.bak` に残します。入れ替え非対応・書き込み失敗時は、現在の保存を削除せず
+  HUD に警告を出します。
+- 不正・未対応バージョンの保存は `.preserved-日時-識別子` として保全してからバックアップを試します。
+  原本が消えていてもバックアップがあれば復旧します。ロードだけでは新しい保存を書きません。
+- 原本を保全できない場合はそのセッションの保存を停止し、既存データを上書きしません。
+- 警告中は進行がメモリ内だけの可能性があります。終了前に保存先の権限や空き容量を確認してください。
+
+デバッグで最初から遊ぶ場合は **Editor を停止**し、上記保存ファイルと `.bak` を別フォルダーへ
+退避してください。ゲーム内の削除機能は設けていません。
+ローカル時計/ファイルの編集を防ぐ不正対策やクラウド同期はまだ対象外です。
+
+## 構成
+
+- `Assets/Aquarium/Core`: Unity 非依存の状態・計算・検証・保存インターフェース
+- `Assets/Aquarium/Runtime`: シーン起動、HUD、入力、JSON・ファイル保存、復旧
+- `Assets/Aquarium/Presentation`: 3D 海底、ピクセル生物、遊泳、給餌表現、URP シェーダー
+- `Assets/Aquarium/Tests`: EditMode のモデルテストと PlayMode の表示/UI 結線スモークテスト
+- `tools/Aquarium.Core.Tests`: 実際の Core・FileStore・Recovery コードを .NET 8 でコンパイルするテスト
+
+ビルド設定は新デモを起動シーンにしています。古い SampleScene は無効状態で残しています。
+既存のパッケージ/Unity バージョンを更新したり、古いサーバーに接続したりはしていません。
+シーンの内容は Play 開始時に生成するため、編集モードではルートオブジェクトのみ表示されます。
+
+## 検証コマンド
+
+リポジトリルートで実行:
+
+```sh
+DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1 \
+  dotnet run --project tools/Aquarium.Core.Tests/Aquarium.Core.Tests.csproj --configuration Release
+python3 tools/validate_unity_assets.py
+```
+
+37個のスタンドアロンチェックでは、時間分割の一致、8時間上限、時計逆行、二重回収、
+経済上限、購入失敗、不正保存、実ファイルの入れ替え/バックアップ、書き込み失敗、復旧を検証します。
+GitHub Actions もこのライセンス不要の検証だけを行います。Unity テストの代わりではありません。
+
+Unity Editor の Test Runner で **EditMode** と **PlayMode** を実行してください。
+CLI で実行する場合は、ライセンスが有効な Editor のパスを `UNITY_EDITOR` に指定します。
+
+```sh
+"$UNITY_EDITOR" -batchmode -nographics -projectPath "$PWD/unity" \
+  -runTests -testPlatform EditMode -testResults "$PWD/editmode-results.xml" -logFile "$PWD/editmode.log"
+"$UNITY_EDITOR" -batchmode -projectPath "$PWD/unity" \
+  -runTests -testPlatform PlayMode -testResults "$PWD/playmode-results.xml" -logFile "$PWD/playmode.log"
+```
+
+### 実機/Editor の受け入れチェック
+
+- 新デモを開いて例外・ピンクのマテリアル・欠けた文字がないこと
+- 給餌/掃除を連打して100を超えないこと、給餌表現とボタンの無効状態
+- Moon Jelly の迎え入れで30消費し、もう一度押すと選択だけになること
+- 水槽と右側リストの選択が連動し、UIを押して水槽が誤選択されないこと
+- 再起動で保存を復元し、短時間の休止/フォーカス移動が重複加算されないこと
+- 不正保存と `.bak` の復旧、保存先が書けないときの警告
+- 1280×720 / 1920×1080 / 4:3 の可読性、プレイヤービルドでのシェーダー保持
+
+.NET の成功は Unity API のコンパイル、シェーダー描画、実入力、プレイヤービルドの成功を意味しません。
+Unity Editor での最終検証結果は PR の検証欄に記録します。

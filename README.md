@@ -2,6 +2,16 @@
 
 HD-2D 調の放置型育成ゲームです。
 
+## Unity で遊ぶ: First Reef
+
+Unity **6000.3.2f1** で `unity/` を開き、**Aquarium → Open First Reef** から Play。
+給餌・掃除・3種の仲間・成長・pearls 回収・ローカル保存・最大8時間のオフライン進行を実装しています。
+新デモはサーバーや有料の画像制作サービスに依存しません。
+
+起動方法、操作、保存/復旧、検証、現在の制約は [First Reef ガイド](docs/first-reef.md) を参照してください。
+
+以下は既存のアセット制作メモです。新デモの起動にこの制作フローは必要ありません。
+
 ## Init Image を用意する
 
 Init Image は Diffuse map の作成に利用する。この画像では大雑把な色味さえ分かれば良いです。
@@ -39,3 +49,4 @@ Diffuse map は [PixelLab](https://www.pixellab.ai/) の [Simple Creator](https:
 - Export ボタンを押す
 
 ## Terrain に設定する
+

@@ -1,0 +1,7 @@
+{
+  "name": "Aquarium.Core",
+  "rootNamespace": "Aquarium.Core",
+  "references": [],
+  "autoReferenced": true,
+  "noEngineReferences": true
+}

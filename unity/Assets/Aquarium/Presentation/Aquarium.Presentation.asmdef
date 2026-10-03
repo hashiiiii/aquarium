@@ -1,0 +1,6 @@
+{
+  "name": "Aquarium.Presentation",
+  "rootNamespace": "Aquarium.Presentation",
+  "references": ["Unity.RenderPipelines.Universal.Runtime", "Unity.RenderPipelines.Core.Runtime"],
+  "autoReferenced": true
+}
