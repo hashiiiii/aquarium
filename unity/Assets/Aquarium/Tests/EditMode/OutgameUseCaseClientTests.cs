@@ -95,6 +95,28 @@ namespace Aquarium.Tests
             UnityEngine.Object.DestroyImmediate(settings);
         }
 
+        [Test]
+        public async Task GatewayCanBeRetriedAfterTransportFailure()
+        {
+            var settings = ScriptableObject.CreateInstance<AquariumConnectionSettings>();
+            var failure = new IOException("offline");
+            using var transport = new FakeTransport(
+                () => Task.FromException<OnlineHttpResponse>(failure),
+                () => Task.FromResult(new OnlineHttpResponse(200,
+                    "{\"state\":{\"version\":1,\"revision\":\"17\",\"lastUpdatedAtUnixMs\":\"1790985600000\",\"pearls\":\"42\",\"fullness\":75,\"cleanliness\":85,\"creatures\":[]}}")));
+            using var gateway = new AuthoritativeAquariumGateway(settings, new UnityOnlineJsonCodec(), transport);
+
+            var first = Assert.ThrowsAsync<IOException>(async () =>
+                await gateway.GetAquariumAsync(CancellationToken.None));
+            var recovered = await gateway.GetAquariumAsync(CancellationToken.None);
+
+            Assert.That(first, Is.SameAs(failure));
+            Assert.That(recovered.Revision, Is.EqualTo("17"));
+            Assert.That(recovered.PearlBalance, Is.EqualTo(42));
+            Assert.That(transport.RequestCount, Is.EqualTo(2));
+            UnityEngine.Object.DestroyImmediate(settings);
+        }
+
         [TestCase("not-json")]
         [TestCase("{\"other\":true}")]
         [TestCase("{\"state\":null}")]
@@ -148,14 +170,24 @@ namespace Aquarium.Tests
 
         private sealed class FakeTransport : IOnlineTransport, IDisposable
         {
-            private readonly OnlineHttpResponse response;
+            private readonly Func<Task<OnlineHttpResponse>>[] responses;
             public bool IsDisposed { get; private set; }
+            public int RequestCount { get; private set; }
             public Uri Endpoint { get; private set; }
             public string Player { get; private set; }
             public string Body { get; private set; }
             public CancellationToken Token { get; private set; }
 
-            public FakeTransport(OnlineHttpResponse response) => this.response = response;
+            public FakeTransport(OnlineHttpResponse response)
+                : this(() => Task.FromResult(response)) { }
+
+            public FakeTransport(Func<Task<OnlineHttpResponse>> response)
+                : this(new[] { response }) { }
+
+            public FakeTransport(Func<Task<OnlineHttpResponse>> first, Func<Task<OnlineHttpResponse>> second)
+                : this(new[] { first, second }) { }
+
+            private FakeTransport(Func<Task<OnlineHttpResponse>>[] responses) => this.responses = responses;
 
             public Task<OnlineHttpResponse> PostAsync(Uri endpoint, string devPlayer, string json,
                 CancellationToken cancellationToken)
@@ -164,7 +196,8 @@ namespace Aquarium.Tests
                 Player = devPlayer;
                 Body = json;
                 Token = cancellationToken;
-                return Task.FromResult(response);
+                RequestCount++;
+                return responses[RequestCount - 1]();
             }
 
             public void Dispose() => IsDisposed = true;
