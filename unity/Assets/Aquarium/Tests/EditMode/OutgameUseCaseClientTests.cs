@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Aquarium.Online;
@@ -25,6 +26,18 @@ namespace Aquarium.Tests
 
             Assert.That(result, Is.SameAs(model));
             Assert.That(gateway.Token, Is.EqualTo(cancellation.Token));
+        }
+
+        [Test]
+        public void GetAquariumUseCasePropagatesGatewayFailureUnchanged()
+        {
+            var failure = new InvalidOperationException("gateway failed");
+            var useCase = new GetAquariumUseCase(new FailingGateway(failure));
+
+            var exception = Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await useCase.GetAquariumAsync(CancellationToken.None));
+
+            Assert.That(exception, Is.SameAs(failure));
         }
 
         [Test]
@@ -67,6 +80,38 @@ namespace Aquarium.Tests
         }
 
         [Test]
+        public void GatewayTreatsErrorCodeThatDoesNotMatchHttpStatusAsUnknown()
+        {
+            var settings = ScriptableObject.CreateInstance<AquariumConnectionSettings>();
+            using var transport = new FakeTransport(new OnlineHttpResponse(500,
+                "{\"code\":\"unavailable\",\"message\":\"mismatched status\"}"));
+            using var gateway = new AuthoritativeAquariumGateway(settings, new UnityOnlineJsonCodec(), transport);
+
+            var exception = Assert.ThrowsAsync<OnlineRpcException>(async () =>
+                await gateway.GetAquariumAsync(CancellationToken.None));
+
+            Assert.That(exception.Code, Is.EqualTo("unknown"));
+            Assert.That(exception.StatusCode, Is.EqualTo(500));
+            UnityEngine.Object.DestroyImmediate(settings);
+        }
+
+        [TestCase("not-json")]
+        [TestCase("{\"other\":true}")]
+        [TestCase("{\"state\":null}")]
+        [TestCase("{\"state\":{\"version\":1,\"revision\":\"0\",\"lastUpdatedAtUnixMs\":\"1790985600000\",\"pearls\":\"1\",\"fullness\":80,\"cleanliness\":90,\"creatures\":[]}}")]
+        [TestCase("{\"state\":{\"version\":1,\"revision\":\"1\",\"lastUpdatedAtUnixMs\":\"1790985600000\",\"pearls\":\"1\",\"fullness\":101,\"cleanliness\":90,\"creatures\":[]}}")]
+        public void GatewayRejectsMalformedSuccessfulResponses(string body)
+        {
+            var settings = ScriptableObject.CreateInstance<AquariumConnectionSettings>();
+            using var transport = new FakeTransport(new OnlineHttpResponse(200, body));
+            using var gateway = new AuthoritativeAquariumGateway(settings, new UnityOnlineJsonCodec(), transport);
+
+            Assert.ThrowsAsync<InvalidDataException>(async () =>
+                await gateway.GetAquariumAsync(CancellationToken.None));
+            UnityEngine.Object.DestroyImmediate(settings);
+        }
+
+        [Test]
         public void GatewayDoesNotDisposeTransportOwnedByTheContainer()
         {
             var settings = ScriptableObject.CreateInstance<AquariumConnectionSettings>();
@@ -91,6 +136,14 @@ namespace Aquarium.Tests
                 Token = cancellationToken;
                 return Task.FromResult(model);
             }
+        }
+
+        private sealed class FailingGateway : IGateway
+        {
+            private readonly Exception failure;
+            public FailingGateway(Exception failure) => this.failure = failure;
+            public Task<AquariumModel> GetAquariumAsync(CancellationToken cancellationToken) =>
+                Task.FromException<AquariumModel>(failure);
         }
 
         private sealed class FakeTransport : IOnlineTransport, IDisposable
