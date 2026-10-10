@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Aquarium.Online;
 using Aquarium.Presentation;
+using Aquarium.InGame;
+using Aquarium.Outgame.Client;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using VContainer;
 
 namespace Aquarium.Runtime
 {
@@ -17,10 +18,7 @@ namespace Aquarium.Runtime
     public sealed class OnlineAquariumGame : MonoBehaviour
     {
         [Header("LOCAL DEVELOPMENT ONLY - never use real player identities")]
-        [SerializeField, Tooltip("Native desktop loopback only. No public hosts, proxies, tunnels or browser/WebGL support.")]
-        private string serverEndpoint = DevServerOptions.DefaultEndpoint;
-        [SerializeField, Tooltip("Not authentication. Any local process can impersonate this development player.")]
-        private string developmentPlayer = "unity-dev";
+        [SerializeField] private AquariumConnectionSettings connectionSettings;
         [SerializeField, Min(5), Tooltip("Reads confirmed server progress while connected. Never advances gameplay locally.")]
         private float refreshIntervalSeconds = 15;
 
@@ -28,17 +26,30 @@ namespace Aquarium.Runtime
         private readonly List<CreatureVisual> visuals = new List<CreatureVisual>();
         private readonly CancellationTokenSource lifetime = new CancellationTokenSource();
         private AquariumOnlineSession session;
-        private HttpClientOnlineTransport ownedTransport;
-        private FilePendingCommandStore ownedJournal;
+        private IAquariumOnlineSessionFactory sessionFactory;
         private TankView tank;
         private OnlineAquariumHud hud;
+        private AquariumStateMachine stateMachine;
         private bool operationRunning, initialized, destroyed, suspended, needsResumeRefresh;
         private volatile bool viewDirty;
         private bool connectOnStart = true;
+        private bool lastFocused;
         private float nextRefresh;
         private string selectedSpecies;
         private string startupError;
         public AquariumOnlineSession Session => session;
+        public AquariumConnectionSettings ConnectionSettings => connectionSettings;
+
+        [Inject]
+        private void Construct(IAquariumOnlineSessionFactory factory)
+        {
+            sessionFactory = factory;
+        }
+
+        public void Configure(AquariumConnectionSettings settings)
+        {
+            connectionSettings = settings;
+        }
 
         /// <summary>Optional composition seam for a configured session or an in-memory test transport.</summary>
         public void Initialize(AquariumOnlineSession configuredSession, bool connect = true)
@@ -50,11 +61,14 @@ namespace Aquarium.Runtime
 
         private void Start()
         {
+            stateMachine = new AquariumStateMachine(() => SceneManager.LoadScene("Home"));
+            lastFocused = Application.isFocused;
             tank = gameObject.AddComponent<TankView>();
             tank.Initialize();
             tank.CreatureSelected += SelectCreature;
             hud = gameObject.AddComponent<OnlineAquariumHud>();
-            hud.Initialize(Feed, Clean, Collect, Adopt, SelectCreature, Reconnect, RetryPending, developmentPlayer);
+            hud.Initialize(Feed, Clean, Collect, Adopt, SelectCreature, Reconnect, RetryPending,
+                connectionSettings == null ? "unity-dev" : connectionSettings.DevelopmentPlayer);
             initialized = true;
             nextRefresh = Time.unscaledTime + Mathf.Max(5, refreshIntervalSeconds);
             try
@@ -64,11 +78,9 @@ namespace Aquarium.Runtime
 #else
                 if (session == null)
                 {
-                    var options = new DevServerOptions(serverEndpoint, developmentPlayer);
-                    ownedTransport = new HttpClientOnlineTransport();
-                    var api = new ReefApiClient(options, new UnityOnlineJsonCodec(), ownedTransport);
-                    ownedJournal = new FilePendingCommandStore(PendingJournalPath(options));
-                    session = new AquariumOnlineSession(api, ownedJournal);
+                    if (sessionFactory == null)
+                        throw new InvalidOperationException("Aquarium scene scope did not inject an online session factory.");
+                    session = sessionFactory.Create();
                 }
                 session.Changed += MarkDirty;
                 if (connectOnStart) Run(token => session.ConnectAsync(token));
@@ -78,29 +90,34 @@ namespace Aquarium.Runtime
             {
                 // Fail visibly; an invalid online configuration must never launch the offline game.
                 startupError = "Online setup failed: " + exception.Message + " Stop Play and check the Online First Reef Inspector.";
-                ownedTransport?.Dispose();
-                ownedTransport = null;
-                ownedJournal?.Dispose();
-                ownedJournal = null;
             }
             RefreshView();
         }
 
-        private static string PendingJournalPath(DevServerOptions options)
-        {
-            // This is a command journal, not a gameplay save. Its envelope also validates endpoint/player binding.
-            using (var hash = SHA256.Create())
-            {
-                var digest = hash.ComputeHash(Encoding.UTF8.GetBytes(options.Endpoint + "\n" + options.DevPlayer));
-                var key = BitConverter.ToString(digest).Replace("-", "").ToLowerInvariant();
-                return Path.Combine(Application.persistentDataPath, "online-command-" + key + ".json");
-            }
-        }
-
         private void Update()
         {
-            if (!initialized || destroyed || suspended) return;
+            if (!initialized || destroyed) return;
+            var focused = Application.isFocused;
+            if (focused && !lastFocused) needsResumeRefresh = true;
+            suspended = !focused;
+            lastFocused = focused;
+            stateMachine.Update(session?.Snapshot != null,
+                Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame);
+            if (stateMachine.Mode == AquariumMode.Leaving || stateMachine.Mode == AquariumMode.Closed) return;
+            UpdatePresentation();
+            UpdatePointerInput();
+            UpdateConnection();
+        }
+
+        private void UpdatePresentation()
+        {
             if (viewDirty) RefreshView();
+            tank?.Tick();
+            hud?.Tick();
+        }
+
+        private void UpdatePointerInput()
+        {
             if (Pointer.current != null && Pointer.current.press.wasPressedThisFrame)
             {
                 var position = Pointer.current.position.ReadValue();
@@ -109,6 +126,11 @@ namespace Aquarium.Runtime
                     EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = position }, uiHits);
                 if (uiHits.Count == 0) tank.PickCreature(position);
             }
+        }
+
+        private void UpdateConnection()
+        {
+            if (suspended) return;
             if (session == null || operationRunning || session.IsBusy) return;
             if (needsResumeRefresh)
             {
@@ -149,6 +171,7 @@ namespace Aquarium.Runtime
             {
                 var task = operation(lifetime.Token);
                 RefreshView();
+                sessionFactory?.Track(task);
                 var result = await task;
                 if (!destroyed && isActiveAndEnabled && feedEffect && result.GameplaySucceeded) tank.PlayFeedEffect();
             }
@@ -205,23 +228,6 @@ namespace Aquarium.Runtime
                 session?.HasPendingCommand ?? false, session != null && startupError == null);
         }
 
-        private void OnApplicationPause(bool paused)
-        {
-            suspended = paused;
-            if (!paused) needsResumeRefresh = true;
-        }
-
-        private void OnApplicationFocus(bool focused)
-        {
-            // Refresh on resume, including after an in-flight command settles. Never silently replay an uncertain command.
-            if (initialized && focused) needsResumeRefresh = true;
-        }
-
-        private void OnEnable()
-        {
-            if (initialized) needsResumeRefresh = true;
-        }
-
         private void OnDestroy()
         {
             destroyed = true;
@@ -233,10 +239,6 @@ namespace Aquarium.Runtime
 
         private void DisposeResources()
         {
-            ownedTransport?.Dispose();
-            ownedTransport = null;
-            ownedJournal?.Dispose();
-            ownedJournal = null;
             lifetime.Dispose();
         }
     }

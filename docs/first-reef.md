@@ -5,7 +5,7 @@ Unity 側で、海洋ファンタジーの仲間を眺めながら育てる最�
 
 ## 起動
 
-1. Unity Hub で `unity/` を開く。プロジェクト指定版は **6000.3.2f1** です。
+1. Unity Hub で `unity/` を開く。プロジェクト指定版は **6000.6.4f1** です。
 2. Package Manager の解決が完了するまで待つ。既存の URP 17.3 / Input System 1.17 を使用します。
 3. メニュー **Aquarium → Open First Reef** を選択する。
    または `Assets/Aquarium/Scenes/AquariumDemo.unity` を開く。
@@ -59,8 +59,7 @@ PixelLab、画像生成サービス、ゲームサーバー、アカウント認
 - `Assets/Aquarium/Core`: Unity 非依存の状態・計算・検証・保存インターフェース
 - `Assets/Aquarium/Runtime`: シーン起動、HUD、入力、JSON・ファイル保存、復旧
 - `Assets/Aquarium/Presentation`: 3D 海底、ピクセル生物、遊泳、給餌表現、URP シェーダー
-- `Assets/Aquarium/Tests`: EditMode のモデルテストと PlayMode の表示/UI 結線スモークテスト
-- `tools/Aquarium.Core.Tests`: 実際の Core・FileStore・Recovery コードを .NET 8 でコンパイルするテスト
+- `Assets/Aquarium/Tests/EditMode/OutgameUseCaseClientTests.cs`: UseCase と Client gateway adapter の境界テスト
 
 ビルド設定は新デモを起動シーンにしています。古い SampleScene は無効状態で残しています。
 既存のパッケージ/Unity バージョンを更新したり、古いサーバーに接続したりはしていません。
@@ -71,23 +70,16 @@ PixelLab、画像生成サービス、ゲームサーバー、アカウント認
 リポジトリルートで実行:
 
 ```sh
-DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1 \
-  dotnet run --project tools/Aquarium.Core.Tests/Aquarium.Core.Tests.csproj --configuration Release
-python3 tools/validate_unity_assets.py
+dotnet run --project tools/Aquarium.AssetValidator/Aquarium.AssetValidator.csproj --configuration Release
 ```
 
-37個のスタンドアロンチェックでは、時間分割の一致、8時間上限、時計逆行、二重回収、
-経済上限、購入失敗、不正保存、実ファイルの入れ替え/バックアップ、書き込み失敗、復旧を検証します。
-GitHub Actions もこのライセンス不要の検証だけを行います。Unity テストの代わりではありません。
-
-Unity Editor の Test Runner で **EditMode** と **PlayMode** を実行してください。
+Unity Editor の Test Runner で **EditMode** を実行してください。維持する自動テストは
+UseCase と Client adapter の境界に限定しています。画面遷移や Presenter/View 結線のテストは維持しません。
 CLI で実行する場合は、ライセンスが有効な Editor のパスを `UNITY_EDITOR` に指定します。
 
 ```sh
 "$UNITY_EDITOR" -batchmode -nographics -projectPath "$PWD/unity" \
   -runTests -testPlatform EditMode -testResults "$PWD/editmode-results.xml" -logFile "$PWD/editmode.log"
-"$UNITY_EDITOR" -batchmode -projectPath "$PWD/unity" \
-  -runTests -testPlatform PlayMode -testResults "$PWD/playmode-results.xml" -logFile "$PWD/playmode.log"
 ```
 
 ### 実機/Editor の受け入れチェック

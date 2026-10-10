@@ -149,7 +149,7 @@ go install github.com/bufbuild/buf/cmd/buf@v1.66.0
 go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.11
 go install connectrpc.com/connect/cmd/protoc-gen-connect-go@v1.19.1
 export PATH="$(go env GOPATH)/bin:$PATH"
-sh scripts/generate-reef.sh
+go run ./cmd/reef-codegen
 git diff --exit-code -- gen/aquarium
 ```
 

@@ -1,0 +1,12 @@
+{
+  "name": "Aquarium.Outgame.Client",
+  "rootNamespace": "Aquarium.Outgame.Client",
+  "references": [
+    "Aquarium.Outgame.Application",
+    "Aquarium.Outgame.Domain",
+    "R3.Unity",
+    "VContainer",
+    "Unity.InputSystem"
+  ],
+  "noEngineReferences": false
+}

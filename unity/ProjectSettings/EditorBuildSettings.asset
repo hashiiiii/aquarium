@@ -6,15 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Aquarium/Scenes/AquariumDemo.unity
-    guid: 645a974777bf71fc35fef60dadd15950
-  - enabled: 0
+    path: Assets/Aquarium/Scenes/Title.unity
+    guid: 441a5495bd88440129c083226ea29271
+  - enabled: 1
+    path: Assets/Aquarium/Scenes/Home.unity
+    guid: 3a86937b19101468fa03388bfcda56dd
+  - enabled: 1
     path: Assets/Aquarium/Scenes/AquariumOnline.unity
     guid: 9419be0b73894d2b9e69f1b8ff3a373f
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_UseUCBPForAssetBundles: 0
-
