@@ -1,0 +1,6 @@
+{
+  "name": "Aquarium.InGame",
+  "rootNamespace": "Aquarium",
+  "references": ["Aquarium.Outgame.Client", "Aquarium.Outgame.Domain", "Unity.InputSystem", "UnityEngine.UI", "Unity.RenderPipelines.Universal.Runtime", "Unity.RenderPipelines.Core.Runtime", "VContainer"],
+  "noEngineReferences": false
+}

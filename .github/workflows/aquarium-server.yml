@@ -37,7 +37,7 @@ jobs:
           go mod verify
       - name: Check Go formatting for new game server
         run: |
-          files=$(gofmt -l internal/reef internal/handler/reef.go internal/handler/reef_test.go cmd/reef-local)
+          files=$(gofmt -l internal/reef internal/handler/reef.go internal/handler/reef_test.go cmd/reef-local cmd/reef-codegen)
           if [ -n "$files" ]; then printf '%s\n' "$files"; exit 1; fi
       - name: Test all packages with race detector
         run: go test -race -count=1 ./...
@@ -52,5 +52,5 @@ jobs:
           go install connectrpc.com/connect/cmd/protoc-gen-connect-go@v1.19.1
       - name: Verify First Reef generated code
         run: |
-          sh scripts/generate-reef.sh
+          go run ./cmd/reef-codegen
           git diff --exit-code -- gen/aquarium

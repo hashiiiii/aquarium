@@ -1,4 +1,4 @@
-# Used by scripts/generate-reef.sh in its isolated schema root (no buf.lock).
+# Used by cmd/reef-codegen in its isolated schema root (no buf.lock).
 version: v2
 modules:
   - path: .

@@ -58,7 +58,7 @@ namespace Aquarium.Runtime
             }
 
             var header = Panel("Header", safeRoot, new Vector2(0, 1), Vector2.one, new Vector2(24, -94), new Vector2(-24, -20), Ink);
-            Label("Eyebrow", header, "A Q U A R I U M   /   FIRST REEF", 13, Aqua, 20, 9, 670, 21);
+            Label("Eyebrow", header, "A Q U A R I U M   /   OFFLINE FIRST REEF", 13, Aqua, 20, 9, 670, 21);
             Label("Title", header, "A little world, growing with you.", 26, Color.white, 20, 30, 760, 37);
             balance = Label("Pearl balance", header, "30  PEARLS", 22, Pearl, -270, 20, 245, 36, true);
             balance.alignment = TextAnchor.MiddleRight;
